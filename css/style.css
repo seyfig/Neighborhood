@@ -37,3 +37,28 @@ main {
 	width: 240px;
 	margin: 10px;
 }
+.float-left {
+	float: left;
+}
+.float-right {
+	float: right;
+}
+
+.active {
+	color: blue;
+}
+
+.danger {
+	color: red;
+}
+.list-group-item {
+	display: list-item;
+}
+
+.location-name {
+	max-width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    white-space: nowrap;
+}

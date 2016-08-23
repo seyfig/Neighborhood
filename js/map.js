@@ -88,6 +88,8 @@ function initializeMap() {
         }
         $("#clear-pac").click(function() {
           clearPlaceMarkers(placesMarkers);
+          input.textContent = "";
+          input.value = "";
         });
       });
       map.fitBounds(bounds);
@@ -169,6 +171,22 @@ function createMapMarker(location) {
   }
   marker.hideTitleWindow = function() {
     titleWindow.close();
+  }
+
+  marker.bounce = function() {
+    marker.setAnimation(google.maps.Animation.BOUNCE);
+    setTimeout(function() {
+      marker.setAnimation(null);
+    },700);
+  }
+
+  marker.selectLocation = function() {
+    if (typeof activeMarker === "object") {
+      activeMarker.setIcon(undefined);
+    }
+    marker.setIcon('http://maps.google.com/mapfiles/ms/icons/blue-dot.png');
+    marker.bounce();
+    activeMarker = marker;
   }
 
   google.maps.event.addListener(marker, 'mouseover', function() {

@@ -111,6 +111,7 @@ var locationViewModel = function() {
   this.typeList = ko.observableArray([]);
   this.selectedTypes = ko.observableArray([]);
   this.types = [];
+  this.editMode = ko.observable(false);
 
   // Create marker and, assign location to marker
   this.createLocationMarker = function(locations) {
@@ -260,8 +261,18 @@ var locationViewModel = function() {
     self.filterList();
   }
 
+  this.removeLocation = function(location) {
+    self.fullLocationList.remove(location);
+    setMarkerMap(location.marker, null);
+    location.marker = undefined;
+    location = undefined;
+    self.save();
+    self.filterList();
+  }
+
   this.selectLocation = function(location,event) {
     self.currentLocation(location);
+    location.marker.selectLocation();
     if(self.centerOn.indexOf('select') >= 0) {
       map.setCenter(location.marker.getPosition());
     }
@@ -277,6 +288,10 @@ var locationViewModel = function() {
   this.search = function() {
     self.filterList();
     return true;
+  }
+
+  this.toggleEditMode = function() {
+    self.editMode(!self.editMode());
   }
 }
 

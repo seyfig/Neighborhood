@@ -37,9 +37,22 @@
         </div>
       </div>
       <div id="locationList" class="List form-group">
-        <h3>My Places</h3>
+        <h3>My Places
+          <button class="btn btn-primary btn-sm float-right" data-bind="css: {'active': editMode}, click: toggleEditMode">
+            <span class="text-right glyphicon glyphicon-edit" aria-hidden="true"></span>
+          </button>
+        </h3>
         <ul class="list-group" id="location-list" data-bind="foreach: locationList">
-          <li class="list-group-item" data-bind="text: name, event: {click: $parent.selectLocation, mouseover: $parent.showMarkerTitle, mouseout: $parent.hideMarkerTitle}, css: {'active': $data === $parent.currentLocation() }"></li>
+          <li class="list-group-item" data-bind="event: {click: $parent.selectLocation, mouseover: $parent.showMarkerTitle, mouseout: $parent.hideMarkerTitle}, css: {'active': $data === $parent.currentLocation() }">
+            <div class="location-name float-left">
+              <span data-bind="text: name"></span>
+            </div>
+            <div class="location-edit float-right" data-bind="css: {'hidden': !$parent.editMode()}">
+              <button class="btn btn-danger btn-xs" data-bind="click: $parent.removeLocation">
+                <span class="text-right glyphicon glyphicon-remove" aria-hidden="true"></span>
+              </button>
+            </div>
+          </li>
         </ul>
       </div>
       <div id="info-window" class="info-window hidden" data-bind="with: currentLocation(), css: {'hidden': !currentLocation}">
