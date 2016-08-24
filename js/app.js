@@ -9,7 +9,7 @@ var initialLocations = [
         lng: -122.50751
       }
     },
-    formatted_address: '608 Point Lobos Ave, San Francisco, CA 94121'
+    formatted_address: '608 Point Lobos Ave, San Francisco, CA 94121, USA'
   },
   {
     name: 'Golden Gate Vista Point',
@@ -20,7 +20,7 @@ var initialLocations = [
         lng: -122.479468
       }
     },
-    formatted_address: 'U.S. Highway 101, Sausalito, CA 94965'
+    formatted_address: 'U.S. Highway 101, Sausalito, CA 94965, USA'
   },
   {
     name: 'Lombard Street',
@@ -31,7 +31,7 @@ var initialLocations = [
         lng: -122.41874
       }
     },
-    formatted_address: 'Lombard St, San Francisco, CA 94133'
+    formatted_address: 'Lombard St, San Francisco, CA 94133, USA'
   },
   {
     name: 'Golden Gate Park',
@@ -42,7 +42,7 @@ var initialLocations = [
         lng: -122.4862138
       }
     },
-    formatted_address: 'JFK Drive and 25th Avenue, San Francisco, CA 94121'
+    formatted_address: 'JFK Drive and 25th Avenue, San Francisco, CA 94121, USA'
   },
   {
     name: 'Union Square',
@@ -53,7 +53,7 @@ var initialLocations = [
         lng: -122.407437
       }
     },
-    formatted_address: '333 Post St, San Francisco, CA 94108'
+    formatted_address: '333 Post St, San Francisco, CA 94108, USA'
   }
 ];
 
@@ -75,20 +75,49 @@ var Type = function(data) {
 };
 
 var Place = function(data) {
+  var address = data.formatted_address.split(',');
   this.name = ko.observable(data.name);
   this.location = ko.observable(data.geometry.location);
   this.formatted_address = ko.observable(data.formatted_address);
+  this.street = ko.observable(address[0].trim());
+  this.city = ko.observable(address[1].trim());
+  this.state = ko.observable(address[2].trim());
+  this.country = ko.observable(address[3].trim());
   this.price_level = ko.observable(data.price_level);
   this.rating = ko.observable(data.rating);
   this.types = ko.observableArray(data.types);
+  this.wikipediaQuery = ko.computed(function() {
+    return this.name() + " " + this.city();
+  },this);
   this.getTypes = ko.computed(function() {
     return this.types().join(", ");
   }, this);
+  var wikipedia = Wikipedia({
+    text: "",
+    title: ""
+  });
+  this.wikipedia = ko.observable(wikipedia);
 };
 
 var Message = function(data) {
   this.text = ko.observable(data.text);
   this.kind = ko.observable(data.kind);
+};
+
+var Wikipedia = function(data) {
+  this.text = ko.observable(data.text);
+  this.title = data.title;
+  this.longText = ko.observable("");
+  this.images = ko.observableArray([]);
+  this.pageid = data.pageid;
+};
+
+var WikipediaImage = function(data) {
+  this.url = ko.observable(data.url),
+  this.thumburl = ko.observable(data.thumburl),
+  this.descriptionurl = ko.observable(data.descriptionurl),
+  this.user = ko.observable(data.user),
+  this.timestamp = ko.observable(data.timestamp)
 };
 
 var messageViewModel = function() {
@@ -112,6 +141,7 @@ var locationViewModel = function() {
   this.selectedTypes = ko.observableArray([]);
   this.types = [];
   this.editMode = ko.observable(false);
+  this.wikipediaMode = ko.observable(false);
 
   // Create marker and, assign location to marker
   this.createLocationMarker = function(locations) {
@@ -189,6 +219,7 @@ var locationViewModel = function() {
       setMapBoundsVisibleMarkers();
     }
   };
+
   this.addTypeFromText = function(typeNames) {
     if (!Array.isArray(typeNames)) {
       typeNames = [typeNames];
@@ -205,6 +236,7 @@ var locationViewModel = function() {
       }
     })
   };
+
   this.addTypeFromName = function(typeNames) {
     if (!Array.isArray(typeNames)) {
       typeNames = [typesNames];
@@ -276,6 +308,14 @@ var locationViewModel = function() {
     if(self.centerOn.indexOf('select') >= 0) {
       map.setCenter(location.marker.getPosition());
     }
+    //Wikipedia Information
+    if(!location.wikipedia()) {
+      wikipediaSearchRequest(location.wikipediaQuery());
+      //TODO
+      // assign wiki object to location or lvm
+      // if lvm, only one wiki can be stored
+      // if location, how to sync location and wiki object
+    }
   };
 
   this.showMarkerTitle = function(location) {
@@ -288,11 +328,39 @@ var locationViewModel = function() {
   this.search = function() {
     self.filterList();
     return true;
-  }
+  };
 
   this.toggleEditMode = function() {
     self.editMode(!self.editMode());
-  }
+  };
+
+  this.addWikipedia = function(wikipediaData) {
+    var location = self.currentLocation();
+    var wikipedia = new Wikipedia(wikipediaData);
+    location.wikipedia(wikipedia);
+  };
+
+  this.toggleWikipediaMode = function() {
+    var location = self.currentLocation();
+    if (!location.wikipedia().longText()){
+      wikipediaQueryRequest(location.wikipedia().title);
+    }
+    self.wikipediaMode(!self.wikipediaMode);
+  };
+
+  this.addWikipediaDetail = function(wikipediaData) {
+    var location = self.currentLocation();
+    location.wikipedia().longText(wikipediaData.ongText);
+    location.wikipedia().pageid = wikipediaData.pageid;
+  };
+
+  this.addWikipediaImages = function(images) {
+    var location = self.currentLocation();
+    var wikipedia = location.wikipedia();
+    images.forEach(function(imageData) {
+      wikipedia.images.push(new WikipediaImage(imageData));
+    });
+  };
 }
 
 $(function() {

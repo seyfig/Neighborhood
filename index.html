@@ -62,6 +62,16 @@
           <p class="location-address" data-bind="text: formatted_address">
           </p>
         </div>
+        <div class="location-wikipedia-short" data-bind="with: wikipedia()">
+          <h4>Wikipedia
+            <button class="btn btn-primary btn-xs float-right" data-bind="css: {'active': $root.wikipediaMode}, click: $root.toggleWikipediaMode">
+              <span class="text-right glyphicon glyphicon-expand" aria-hidden="true"></span>
+            </button>
+          </h4>
+          <div>
+            <p data-bind="text: text"></p>
+          </div>
+        </div>
       </div>
     </div>
   </nav>
@@ -81,5 +91,6 @@
 <script src="js/bootstrap.min.js"></script>
 <script src="js/map.js"></script>
 <script src="js/app.js"></script>
+<script src="js/api.js"></script>
 </body>
 </html>
