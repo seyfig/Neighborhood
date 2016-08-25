@@ -150,4 +150,3 @@ var wikipediaGeoRequest = function(query) {
   });
   return data;
 }
-
