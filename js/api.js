@@ -1,5 +1,3 @@
-// TODO replace '  ' with '  '
-
 var getFirstChild = function(list) {
   var item;
   for (var index in list) {
@@ -26,8 +24,8 @@ var wikipediaSearchRequest = function(query) {
     if (response[1][0]) {
       // TODO sync issue
       var wikipediaData = {
-      	title: response[1][0],
-      	text: response[2][0]
+        title: response[1][0],
+        text: response[2][0]
       }
       lvm.addWikipedia(wikipediaData);
     }
@@ -59,10 +57,10 @@ var wikipediaQueryRequest = function(query) {
     res2 = response;
     var pages = response.query.pages;
     var page = getFirstChild(pages);
-	var wikipediaData = {
-	  longText: page.extract,
-	  pageid: page.pageid
-	};
+  var wikipediaData = {
+    longText: page.extract,
+    pageid: page.pageid
+  };
     lvm.addWikipediaDetail(wikipediaData);
     wikipediaImagesRequest(page.pageid);
   })
@@ -76,8 +74,8 @@ var wikipediaQueryRequest = function(query) {
 
 var wikipediaImagesRequest = function(query) {
   var wikipediaURL = "https://en.wikipedia.org/w/api.php?action=query&pageids=" +
-  					query +
-  					"&generator=images&prop=imageinfo&iiprop=url|dimensions|mime|user|timestamp&format=json&iiurlwidth=800";
+            query +
+            "&generator=images&prop=imageinfo&iiprop=url|dimensions|mime|user|timestamp&format=json&iiurlwidth=800";
   var wikiRequestTimeout = setTimeout(function() {
     console.log('failed to get wikipedia images');
   },2000);
@@ -88,22 +86,22 @@ var wikipediaImagesRequest = function(query) {
   })
   .done(function(response) {
     clearTimeout(wikiRequestTimeout);
-	var pages = response.query.pages;
-	var images = [];
-	for (var index in pages) {
-		var page = pages[index];
-		if (!page.pageid) {
-			var imageinfo = page.imageinfo[0];
-			var imageData = {
-				url: imageinfo.url,
-				thumburl: imageinfo.thumburl,
-				descriptionurl: imageinfo.descriptionurl,
-				user: imageinfo.user,
-				timestamp: imageinfo.timestamp,
-			};
-			images.push(imageData);
-		}
-	}
+  var pages = response.query.pages;
+  var images = [];
+  for (var index in pages) {
+    var page = pages[index];
+    if (!page.pageid) {
+      var imageinfo = page.imageinfo[0];
+      var imageData = {
+        url: imageinfo.url,
+        thumburl: imageinfo.thumburl,
+        descriptionurl: imageinfo.descriptionurl,
+        user: imageinfo.user,
+        timestamp: imageinfo.timestamp,
+      };
+      images.push(imageData);
+    }
+  }
     lvm.addWikipediaImages(images);
   })
   .fail(function(jqxhr, textStatus, error) {
