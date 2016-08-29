@@ -4,19 +4,13 @@ function initializeMap() {
   	var mapOptions = {
   		center: {lat: 37.795, lng: -122.450},
   		zoom: 13,
-      mapTypeId: 'roadmap'
+      mapTypeId: 'roadmap',
+      zoomControl: true,
+      mapTypeControl: false,
+      streetViewControl: false
   	};
   	map = new google.maps.Map(document.getElementById('map'), mapOptions);
     markers = [];
-
-
-
-
-
-
-
-
-
 
     /* Search Locations From Google Places */
     // Create the search box and link it to the UI element.

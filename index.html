@@ -10,17 +10,31 @@
 </head>
 <body>
   <nav class="sidebar">
+    <div class="sidebar-hamburger">
+      <button class="btn btn-default sidebar-button">
+        <span class="glyphicon glyphicon-menu-hamburger"></span>
+      </button>
+    </div>
     <div id="locations">
       <div class="form-group">
-        <h3>Search</h3>
-        <input type="text" id="search" class="filtertext form-control" data-bind="textInput: searchText, event: {'keyup': search}">
+        <div class="btn-group filter-group">
+          <button type="button" class="btn btn-default filter-button" data-bind="click: toggleFilterMode">Filters</button>
+          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-bind="click: toggleFilterMode">
+            <span class="caret"></span>
+            <span class="sr-only">Toggle Dropdown</span>
+          </button>
+          <ul class="dropdown-menu list-group filter-list" data-bind="foreach: typeList, css:{'hidden': !filterMode()}">
+            <li class="list-group-item filter-item p-cursor">
+              <label class="filter-item-label float-left" data-bind="attr: {for: elem}, text: text"></label>
+              <input class="float-right" type="checkbox" data-bind="attr: {name: elem, id: elem}, value: text, checked: $parent.selectedTypes, click: $parent.search">
+              <div class="fake-checkbox" data-bind="click: $parent.clickCheckbox">
+              </div>
+            </li>
+          </ul>
+        </div>
       </div>
       <div class="form-group">
-        <h3>Filters</h3>
-        <div data-bind="foreach: typeList">
-          <label data-bind="attr: {for: elem}, text: text"></label>
-          <input type="checkbox" data-bind="attr: {name: elem, id: elem}, value: text, checked: $parent.selectedTypes, click: $parent.search">
-        </div>
+        <input type="text" id="search" class="filtertext form-control" data-bind="textInput: searchText, event: {'keyup': search}" placeholder="Neighborhood Search">
       </div>
       <div class="List form-group">
         <h3>My Places
@@ -41,9 +55,11 @@
           </li>
         </ul>
       </div>
-      <div id="info-window" class="info-window hidden" data-bind="with: currentLocation(), css: {'hidden': !currentLocation}">
-        <h3 data-bind="text: name"></h3>
-        <h4 data-bind="text: getTypes" class="location-type"></h4>
+      <div id="info-window" class="info-window hidden" data-bind="with: currentLocation(), css: {'hidden': !currentLocation()}">
+        <div class="info-window-header">
+          <h3 data-bind="text: name"></h3>
+          <h4 data-bind="text: getTypes" class="location-type"></h4>
+        </div>
         <div class="location-address">
           <p class="location-address" data-bind="text: formatted_address">
           </p>
@@ -69,7 +85,7 @@
     </div>
     <div class="hidden">
       <div id="pac-div" class="input-group google-search">
-        <input id="pac-input" class="controls form-control" type="text" placeholder="Google Places Search Box">
+        <input id="pac-input" class="controls form-control" type="text" placeholder="Google Places Search">
         <span class="input-group-btn">
           <button id="clear-pac" class="btn btn-default" type="button">X</button>
         </span>
@@ -95,8 +111,6 @@
       <div class="form-group options-div" data-bind="css: {'hidden': !optionsMode()}">
         <h4 class="options-header">Options</h4>
         <label>Center Map On: </label>
-
-
         <ul class="list-group option-list" data-bind="foreach: centerOnList">
           <li class="list-group-item option-item p-cursor">
             <label class="option-item-label float-left" data-bind="attr: {for: 'center_on_' + $data}, text: $data" >Select</label>
@@ -110,7 +124,7 @@
   </main>
 
   <!-- Modal -->
-  <div class="modal fade" id="wikipediaModal" tabindex="-1" role="dialog" aria-labelledby="wikipediaModalLabel" data-bind="with: currentLocation(), css: {'hidden': !currentLocation}">
+  <div class="modal fade" id="wikipediaModal" tabindex="-1" role="dialog" aria-labelledby="wikipediaModalLabel" data-bind="with: currentLocation(), css: {'hidden': !currentLocation()}">
     <div class="modal-dialog" role="document" data-bind="with: wikipedia()">
       <div class="modal-content">
         <div class="modal-header">

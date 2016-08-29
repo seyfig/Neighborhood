@@ -1,32 +1,141 @@
 html, body, main {
   height: 100%;
+  min-width: 240px;
 }
+
+
+@media only screen and (min-width: 768px) {
+  main {
+    left: 240px;
+  }
+
+  .sidebar {
+    left: 0;
+  }
+
+  .sidebar-hamburger {
+    display: none;
+  }
+
+  .location-list, .filter-list {
+    max-height: 400px;
+  }
+
+  .filter-button {
+    width: 193px;
+  }
+
+
+}
+
+@media only screen and (min-width:0px) and (max-width: 767px) {
+  main {
+    left: 0;
+  }
+
+  .sidebar {
+    left: -240px;
+  }
+
+  .sidebar-hamburger.expand {
+    position:absolute;
+    right:0;
+    left: auto;
+    margin: 9px;
+  }
+
+  .sidebar-hamburger {
+    position: fixed;
+    margin:10px;
+    width:40px;
+    height: 40px;
+    z-index: 20;
+    top: 0;
+    left: 0;
+  }
+
+  #pac-div {
+    left: 50px !important;
+  }
+
+  .location-list, .filter-list {
+    max-height: 300px;
+  }
+
+  .filter-button {
+    width: 134px;
+  }
+
+}
+
+@media only screen and (max-width: 359px) {
+  #pac-div {
+    left: 50px !important;
+    width: 50%;
+  }
+
+  .location-list, .filter-list {
+    max-height: 220px;
+  }
+
+  .info-window {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    z-index: 20;
+    background-color: #e6e6e6;
+    border-color: #adadad;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: 10px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 40%;
+  }
+
+  .info-window-header > h3 {
+    font-size: 20px;
+    margin: 0;
+    float: left;
+  }
+
+  .info-window-header > h4 {
+    float: right;
+    margin: 0;
+  }
+
+
+}
+
 
 main {
   position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
-  left: 240px;
-}
-
-.map {
-  height: 100%;
-  min-height: 480px;
-  background-color:#aaaaaa;
 }
 
 .sidebar {
   position: absolute;
   top: 0;
-  left: 0;
   bottom: 0;
   float: left;
   padding: 10px;
   z-index: 10;
   height: 100%;
   width: 240px;
-  background-color: #ccd;
+  background-color: #e6e6e6;
+  border-color: #adadad;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+
+.map {
+  height: 100%;
+  min-height: 480px;
+  background-color:#aaaaaa;
 }
 
 .messages {
@@ -70,9 +179,39 @@ main {
   color: red;
 }
 
-.location-list {
+.location-list, .filter-list {
   overflow-y: auto;
-  max-height: 400px;
+}
+
+.filter-group {
+  width: 100%;
+}
+
+.filter-button {
+  text-align: left;
+}
+
+.filter-list {
+  width: 100%;
+  padding: 0 0 20px;
+  margin: -1px 0;
+  display: block;
+  background-color: #e6e6e6;
+  border: 2px solid #adadad;
+  border-radius: 4px;
+}
+
+.filter-item {
+  width: 100%;
+  height: 40px;
+}
+
+.filter-item-label {
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  white-space: nowrap;
 }
 
 .list-group-item {
@@ -249,8 +388,8 @@ main {
   position: fixed;
   right: 10px;
   top: 10px;
-  width: 140px;
-  height: 240px;
+  width: 40px;
+  height: 40px;
   overflow: hidden;
 }
 
@@ -264,7 +403,8 @@ main {
 .options-div {
   position: absolute;
   background-color: white;
-  width: 100%;
+  width: 140px;
+  right: 0;
   padding: 10px;
   overflow-x: hidden;
   overflow-y: auto;

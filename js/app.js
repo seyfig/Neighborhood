@@ -117,6 +117,7 @@ var locationViewModel = function() {
   this.selectedTypes = ko.observableArray([]);
   this.types = [];
   this.editMode = ko.observable(false);
+  this.filterMode = ko.observable(false);
   this.wikipediaMode = ko.observable(false);
   this.optionsMode = ko.observable(false);
   this.locations = {};
@@ -338,6 +339,10 @@ var locationViewModel = function() {
     self.editMode(!self.editMode());
   };
 
+  this.toggleFilterMode = function() {
+    self.filterMode(!self.filterMode());
+  };
+
   this.addWikipedia = function(wikipediaData) {
     console.dir(wikipediaData);
     console.log(wikipediaData);
@@ -427,12 +432,7 @@ var locationViewModel = function() {
     self.optionsMode(!self.optionsMode());
   };
 
-  this.clickCheckbox = function(option) {
-    if (self.centerOn.indexOf(option) >= 0) {
-      self.centerOn.remove(option);
-    }
-    else {
-      self.centerOn.push(option);
-    }
+  this.clickCheckbox = function(option,e) {
+    $(e.target).siblings('input').click()
   };
 }
