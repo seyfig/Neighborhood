@@ -66,75 +66,51 @@ var textFromTypeName = function(typeName) {
   return textArray.join(' ');
 }
 
-var Type = function(data) {
-  this.name = ko.observable(data.name);
-  this.text = ko.observable(data.text);
-  this.elem = ko.computed(function() {
-    return "filter_" + this.name();
-  }, this);
-};
-
-var Place = function(data) {
-  var address = data.formatted_address.split(',');
-  this.name = ko.observable(data.name);
-  this.location = ko.observable(data.geometry.location);
-  this.formatted_address = ko.observable(data.formatted_address);
-  this.street = ko.observable(address[0].trim());
-  this.city = ko.observable(address[1].trim());
-  this.state = ko.observable(address[2].trim());
-  this.country = ko.observable(address[3].trim());
-  this.price_level = ko.observable(data.price_level);
-  this.rating = ko.observable(data.rating);
-  this.types = ko.observableArray(data.types);
-  this.wikipediaQuery = ko.computed(function() {
-    return this.name() + " " + this.city();
-  },this);
-  this.getTypes = ko.computed(function() {
-    return this.types().join(", ");
-  }, this);
-  var wikipedia = Wikipedia({
-    text: "",
-    title: ""
-  });
-  this.wikipedia = ko.observable(wikipedia);
-};
-
-var Message = function(data) {
-  this.text = ko.observable(data.text);
-  this.kind = ko.observable(data.kind);
-};
-
-var Wikipedia = function(data) {
-  this.text = ko.observable(data.text);
-  this.title = data.title;
-  this.longText = ko.observable("");
-  this.images = ko.observableArray([]);
-  this.pageid = data.pageid;
-};
-
-var WikipediaImage = function(data) {
-  this.url = ko.observable(data.url),
-  this.thumburl = ko.observable(data.thumburl),
-  this.descriptionurl = ko.observable(data.descriptionurl),
-  this.user = ko.observable(data.user),
-  this.timestamp = ko.observable(data.timestamp)
-};
-
 var messageViewModel = function() {
   var self = this;
   self.messageList = ko.observableArray([]);
-  self.addMessage = function(message, kind) {
-    self.messageList.push( new Message({
+  this.addMessage = function(component, message, kind, duration) {
+    var message = new Message( {
+      component: component,
       text: message,
       kind: kind
-    }));
+    });
+    self.messageList.unshift(message);
+    if (duration && duration > 0) {
+      setTimeout(function () {
+        self.messageList.remove(message);
+      },duration);
+    }
+    if (component === "Wikipedia") {
+      if (this.wikipediaMessage) {
+        var oldMessage = this.wikipediaMessage();
+        self.messageList.remove(oldMessage);
+        self.wikipediaMessage(message);
+      }
+      else {
+        this.wikipediaMessage = ko.observable(message);
+      }
+    }
+  };
+
+  this.dismissMessage = function(message) {
+    self.messageList.remove(message);
+  };
+
+  this.dismissAllMessages = function() {
+    self.messageList.removeAll();
   }
+
 };
 
 var locationViewModel = function() {
+  // Initialize without Google Maps
   var self = this;
+  this.isGoogleMapsLoaded = false;
   this.centerOn = ko.observableArray([]);
+  this.centerOnList = ko.observableArray(["select","filter"]);
   this.searchText = ko.observable("");
+  this.locationIndex = 0;
   this.fullLocationList = ko.observableArray([]);
   this.locationList = ko.observableArray([]);
   this.typeList = ko.observableArray([]);
@@ -142,9 +118,20 @@ var locationViewModel = function() {
   this.types = [];
   this.editMode = ko.observable(false);
   this.wikipediaMode = ko.observable(false);
+  this.optionsMode = ko.observable(false);
+  this.locations = {};
+
+  // Add Google Maps Functions
+  this.initGoogleMaps = function() {
+    this.isGoogleMapsLoaded = true;
+    self.createLocationMarker(self.fullLocationList());
+  }
 
   // Create marker and, assign location to marker
   this.createLocationMarker = function(locations) {
+    if (!self.isGoogleMapsLoaded) {
+      return false;
+    }
     if (!Array.isArray(locations)) {
       locations = [locations];
     }
@@ -259,11 +246,17 @@ var locationViewModel = function() {
     });
   };
 
+  this.insertLocation = function(location) {
+    location.id = self.locationIndex;
+    self.locationIndex += 1;
+    self.fullLocationList.push(location);
+    self.locations[location.id] = location;
+  };
+
   initialLocations.forEach(function(location) {
-    self.fullLocationList.push( new Place(location));
+    self.insertLocation( new Place(location));
     self.addTypeFromText(location.types);
   });
-  self.createLocationMarker(self.fullLocationList());
   self.locationList(self.fullLocationList.slice(0));
   self.currentLocation = ko.observable();
 
@@ -286,7 +279,7 @@ var locationViewModel = function() {
       typeText.push(text);
     });
     place.types(typeText);
-    self.fullLocationList.push(place);
+    self.insertLocation(place);
     self.createLocationMarker(place);
     self.addTypeFromName(typeNames);
     self.save();
@@ -294,6 +287,7 @@ var locationViewModel = function() {
   }
 
   this.removeLocation = function(location) {
+    self.locations[location.id] = undefined;
     self.fullLocationList.remove(location);
     setMarkerMap(location.marker, null);
     location.marker = undefined;
@@ -304,19 +298,29 @@ var locationViewModel = function() {
 
   this.selectLocation = function(location,event) {
     self.currentLocation(location);
-    location.marker.selectLocation();
-    if(self.centerOn.indexOf('select') >= 0) {
-      map.setCenter(location.marker.getPosition());
+    if (self.isGoogleMapsLoaded) {
+      location.marker.selectLocation();
+      if(self.centerOn.indexOf('select') >= 0) {
+        map.setCenter(location.marker.getPosition());
+      }
     }
-    //Wikipedia Information
-    if(!location.wikipedia()) {
-      wikipediaSearchRequest(location.wikipediaQuery());
-      //TODO
-      // assign wiki object to location or lvm
-      // if lvm, only one wiki can be stored
-      // if location, how to sync location and wiki object
-    }
+    self.searchWikipedia(location);
   };
+
+  this.searchWikipedia = function(location) {
+    //Wikipedia Information
+    if(location.wikipediaStatus === 0) {
+      location.wikipediaStatus = 1;
+      mvm.addMessage("Wikipedia", "Connecting to Wikipedia", "alert-info", 8000);
+      wikipediaSearchRequest(location.wikipediaQuery(), location.id);
+    }
+    else if (location.wikipediaStatus === 1) {
+      mvm.addMessage("Wikipedia",
+                    "Call for " + location.name() + " on process",
+                    "alert-warning",
+                    2000);
+    }
+  }
 
   this.showMarkerTitle = function(location) {
     location.marker.showTitleWindow();
@@ -335,40 +339,100 @@ var locationViewModel = function() {
   };
 
   this.addWikipedia = function(wikipediaData) {
-    var location = self.currentLocation();
+    console.dir(wikipediaData);
+    console.log(wikipediaData);
+    var locationId = wikipediaData.locationId;
+    var location = self.locations[locationId];
     var wikipedia = new Wikipedia(wikipediaData);
     location.wikipedia(wikipedia);
+    location.wikipediaStatus = 2;
   };
 
-  this.toggleWikipediaMode = function() {
-    var location = self.currentLocation();
-    if (!location.wikipedia().longText()){
-      wikipediaQueryRequest(location.wikipedia().title);
-    }
-    self.wikipediaMode(!self.wikipediaMode);
+  this.addWikipediaFail = function(locationId) {
+    var location = self.locations[locationId];
+    location.wikipediaStatus = 0;
+    mvm.addMessage("Wikipedia","Couldn't connect to Wikipedia for now!", "alert-danger", 8000);
   };
+
+  this.addWikipediaNoInfo = function(locationId) {
+    var location = self.locations[locationId];
+    if (location.wikipediaSearchStatus() === 0) {
+      location.wikipediaSearchStatus(1);
+      location.wikipediaStatus = 0;
+      self.searchWikipedia(location);
+    }
+    else if (location.wikipediaSearchStatus() === 1) {
+      location.wikipediaStatus = 3;
+    }
+    mvm.addMessage("Wikipedia",
+                  "No Wikipedia Information for " + location.wikipediaQuery(),
+                  "alert-warning",
+                  8000);
+  };
+
+  this.openWikipediaMode = function() {
+    var location = self.currentLocation();
+    var wikipedia = location.wikipedia();
+    if (!wikipedia.isDetailLoaded()){
+      wikipediaQueryRequest(wikipedia.title, location.id);
+    }
+    else if (!wikipedia.isImagesLoaded()) {
+      wikipediaImagesRequest(wikipedia.pageid, location.id);
+    }
+    self.wikipediaMode(true);
+  };
+
+  this.closeWikipediaMode = function() {
+    self.wikipediaMode(false);
+  }
 
   this.addWikipediaDetail = function(wikipediaData) {
-    var location = self.currentLocation();
-    location.wikipedia().longText(wikipediaData.ongText);
-    location.wikipedia().pageid = wikipediaData.pageid;
+    var locationId = wikipediaData.locationId;
+    var location = self.locations[locationId];
+    var wikipedia = location.wikipedia();
+    wikipedia.longText(wikipediaData.longText);
+    wikipedia.pageid = wikipediaData.pageid;
+    wikipedia.isDetailLoaded(true);
   };
 
-  this.addWikipediaImages = function(images) {
-    var location = self.currentLocation();
+  this.addWikipediaDetailFail = function() {
+    var wikipedia = self.currentLocation().wikipedia();
+    wikipedia.longText("Detail text can not be loaded this time.")
+  }
+
+  this.addWikipediaImages = function(images, locationId) {
+    var location = self.locations[locationId];
     var wikipedia = location.wikipedia();
     images.forEach(function(imageData) {
       wikipedia.images.push(new WikipediaImage(imageData));
     });
+    wikipedia.currentImage(wikipedia.images()[0]);
+    wikipedia.isImagesLoaded(true);
+  };
+
+  this.changeImage = function(wikipedia ,event) {
+    var index = wikipedia.images.indexOf(wikipedia.currentImage());
+    var images = wikipedia.images();
+    var length = images.length;
+    if  (event.toElement.classList.contains("pre-image")) {
+      index = (index - 1) % length;
+    }
+    else {
+      index = (index + 1) % length;
+    }
+    wikipedia.currentImage(images[index]);
+  };
+
+  this.toggleOptionsMode = function() {
+    self.optionsMode(!self.optionsMode());
+  };
+
+  this.clickCheckbox = function(option) {
+    if (self.centerOn.indexOf(option) >= 0) {
+      self.centerOn.remove(option);
+    }
+    else {
+      self.centerOn.push(option);
+    }
   };
 }
-
-$(function() {
-  mvm = new messageViewModel();
-  ko.applyBindings(mvm, document.getElementById("messages"));
-  var isMapInitialized = initializeMap();
-  if (isMapInitialized) {
-    lvm = new locationViewModel();
-    ko.applyBindings(lvm, document.getElementById("locations"));
-  }
-})

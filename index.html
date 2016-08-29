@@ -10,21 +10,7 @@
 </head>
 <body>
   <nav class="sidebar">
-    <div id="messages" class="messages hidden" data-bind="foreach: messageList, css: {'hidden': messageList().length === 0}">
-      <div class="alert" data-bind="css: kind">
-        <span data-bind="text: text"></span>
-        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-      </div>
-    </div>
     <div id="locations">
-      <div id="options" class="form-group">
-        <h3>Options</h3>
-        <label>Center On: </label>
-        <label for="center_on_select">Select</label>
-        <input type="checkbox" name="center_on_select" id="center_on_select" data-bind="value: 'select', checked: centerOn">
-        <label for="center_on_filter">Filter</label>
-        <input type="checkbox" name="center_on_filter" id="center_on_filter" data-bind="value: 'filter', checked: centerOn">
-      </div>
       <div class="form-group">
         <h3>Search</h3>
         <input type="text" id="search" class="filtertext form-control" data-bind="textInput: searchText, event: {'keyup': search}">
@@ -36,14 +22,14 @@
           <input type="checkbox" data-bind="attr: {name: elem, id: elem}, value: text, checked: $parent.selectedTypes, click: $parent.search">
         </div>
       </div>
-      <div id="locationList" class="List form-group">
+      <div class="List form-group">
         <h3>My Places
           <button class="btn btn-primary btn-sm float-right" data-bind="css: {'active': editMode}, click: toggleEditMode">
             <span class="text-right glyphicon glyphicon-edit" aria-hidden="true"></span>
           </button>
         </h3>
-        <ul class="list-group" id="location-list" data-bind="foreach: locationList">
-          <li class="list-group-item" data-bind="event: {click: $parent.selectLocation, mouseover: $parent.showMarkerTitle, mouseout: $parent.hideMarkerTitle}, css: {'active': $data === $parent.currentLocation() }">
+        <ul class="list-group location-list" data-bind="foreach: locationList">
+          <li class="list-group-item p-cursor" data-bind="event: {click: $parent.selectLocation, mouseover: $parent.isGoogleMapsLoaded ? $parent.showMarkerTitle : null, mouseout: $parent.isGoogleMapsLoaded ? $parent.hideMarkerTitle : null}, css: {'active': $data === $parent.currentLocation() }">
             <div class="location-name float-left">
               <span data-bind="text: name"></span>
             </div>
@@ -56,16 +42,16 @@
         </ul>
       </div>
       <div id="info-window" class="info-window hidden" data-bind="with: currentLocation(), css: {'hidden': !currentLocation}">
-        <h3 data-bind="text: name" class="location-name"></h3>
+        <h3 data-bind="text: name"></h3>
         <h4 data-bind="text: getTypes" class="location-type"></h4>
         <div class="location-address">
           <p class="location-address" data-bind="text: formatted_address">
           </p>
         </div>
         <div class="location-wikipedia-short" data-bind="with: wikipedia()">
-          <h4>Wikipedia
-            <button class="btn btn-primary btn-xs float-right" data-bind="css: {'active': $root.wikipediaMode}, click: $root.toggleWikipediaMode">
-              <span class="text-right glyphicon glyphicon-expand" aria-hidden="true"></span>
+          <h4><a target="_blank" data-bind="attr: {href: pageURL}">Wikipedia</a>
+            <button class="btn btn-primary btn-xs float-right" data-bind="css: {'active': $root.wikipediaMode}, click: $root.openWikipediaMode" data-toggle="modal" data-target="#wikipediaModal">
+              <span class="text-right glyphicon glyphicon-modal-window" aria-hidden="true"></span>
             </button>
           </h4>
           <div>
@@ -73,24 +59,116 @@
           </div>
         </div>
       </div>
-    </div>
+
+
+
+    </div> <!-- Locations -->
   </nav>
   <main>
-    <div id="pac-div" class="input-group google-search">
-      <input id="pac-input" class="controls form-control" type="text" placeholder="Google Places Search Box">
-      <span class="input-group-btn">
-        <button id="clear-pac" class="btn btn-default" type="button">X</button>
-      </span>
-    </div>
     <div id="map" class="map">
     </div>
+    <div class="hidden">
+      <div id="pac-div" class="input-group google-search">
+        <input id="pac-input" class="controls form-control" type="text" placeholder="Google Places Search Box">
+        <span class="input-group-btn">
+          <button id="clear-pac" class="btn btn-default" type="button">X</button>
+        </span>
+      </div>
+    </div>
+    <div id="messages" class="messages hidden" data-bind="css: {'hidden': messageList().length === 0}">
+      <div class="message-list">
+        <button class="btn btn-primary message-dismissall" data-bind="click: dismissAllMessages">Dismiss All Messages</button>
+      </div>
+      <div class="message-list" data-bind="foreach: messageList">
+        <div class="alert" data-bind="css: kind">
+          <span data-bind="text: text"></span>
+          <a href="#" class="close" data-dismiss="alert" aria-label="close" data-bind="click: $parent.dismissMessage">&times;</a>
+        </div>
+      </div>
+    </div>
+    <div id="options" class="options">
+      <div class="options-button-div">
+        <button class="btn btn-default float-right" data-bind="click: toggleOptionsMode">
+          <span class="glyphicon glyphicon-option-vertical"></span>
+        </button>
+      </div>
+      <div class="form-group options-div" data-bind="css: {'hidden': !optionsMode()}">
+        <h4 class="options-header">Options</h4>
+        <label>Center Map On: </label>
+
+
+        <ul class="list-group option-list" data-bind="foreach: centerOnList">
+          <li class="list-group-item option-item p-cursor">
+            <label class="option-item-label float-left" data-bind="attr: {for: 'center_on_' + $data}, text: $data" >Select</label>
+            <input class="float-right" type="checkbox" data-bind="attr: {name: 'center_on_' + $data, id: 'center_on_' + $data}, value: $data, checked: $parent.centerOn">
+            <div class="fake-checkbox" data-bind="click: $parent.clickCheckbox">
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
   </main>
+
+  <!-- Modal -->
+  <div class="modal fade" id="wikipediaModal" tabindex="-1" role="dialog" aria-labelledby="wikipediaModalLabel" data-bind="with: currentLocation(), css: {'hidden': !currentLocation}">
+    <div class="modal-dialog" role="document" data-bind="with: wikipedia()">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" data-bind="click: $root.closeWikipediaMode">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <a target="_blank" data-bind="attr: {href: pageURL}">
+            <h4 class="modal-title" id="wikipediaModalLabel">Wikipedia:
+              <span data-bind="text: $parent.name"></span>
+            </h4>
+          </a>
+        </div>
+        <div class="modal-body">
+          <div class="detail-text-container">
+            <span data-bind="text: longText"></span>
+          </div>
+          <div class="image-container">
+            <div class="pre-image-div image-button-div image-divs">
+              <div class="image-button-place-holder">
+              </div>
+              <button class="pre-image image-button btn btn-primary" data-bind="click: $root.changeImage">
+                <span class="image-button-icon p-cursor glyphicon glyphicon-chevron-left" data-bind="click: $root.changeImage"></span>
+              </button>
+            </div>
+            <div class="image-div image-divs" data-bind="with: currentImage()">
+              <img class="image" data-bind="attr: {src: thumburl, alt: $parents[1].name}">
+              <div class="image-info">
+                <a target="_blank" class="text-left float-left" data-bind="attr: {href: descriptionurl}">
+                  <span>Thanks to <strong  data-bind="text: user"></strong></span>
+                </a>
+                <span  class="text-right float-right" data-bind="text: localDateString"></span>
+              </div>
+            </div>
+            <div class="next-image-div image-button-div image-divs">
+              <div class="image-button-place-holder btn btn-primary">
+              </div>
+              <button class="next-image image-button btn btn-primary" data-bind="click: $root.changeImage">
+                <span class="image-button-icon p-cursor glyphicon glyphicon-chevron-right" data-bind="click: $root.changeImage"></span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal" data-bind="click: $root.closeWikipediaMode">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
 <script src="js/jquery-1.12.4.min.js"></script>
-<script src="http://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyBCmSMFCDMw4lXHO7ntQACiwkdr2YRmB28"></script>
 <script src="js/lib/knockout-3.2.0.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <script src="js/map.js"></script>
-<script src="js/app.js"></script>
 <script src="js/api.js"></script>
+<script src="js/model.js"></script>
+<script src="js/app.js"></script>
+<script src="js/main.js"></script>
+<script src="http://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyBCmSMFCDMw4lXHO7ntQACiwkdr2YRmB28"></script>
 </body>
 </html>

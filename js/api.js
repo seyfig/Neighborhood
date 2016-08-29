@@ -8,7 +8,7 @@ var getFirstChild = function(list) {
 }
 
 var wikipediaRequest = function(url, timeoutFunction, successFunction, failFunction) {
-  var wikiRequestTimeout = setTimeout(timeoutFunction,2000);
+  var wikiRequestTimeout = setTimeout(timeoutFunction,8000);
   $.ajax({
     type: "GET",
     url: url,
@@ -28,36 +28,38 @@ var apiFailFunction = function(jqxhr, textStatus, error) {
       console.log(error);
 }
 
-var wikipediaSearchRequest = function(query) {
+var wikipediaSearchRequest = function(query, locationId) {
   var wikipediaURL = "http://en.wikipedia.org/w/api.php?action=opensearch&search=" +
             query +
             "&format=json&callback=wikiCallback&redirects=resolve&prop=extracts&exintro=&explaintext=&rvprop=content";
   var timeoutFunction = function() {
-    console.log('failed to get wikipedia resources');
+    lvm.addWikipediaFail(locationId);
   }
 
   var successFunction = function(response) {
     if (response[1][0]) {
       // TODO sync issue
       var wikipediaData = {
+        locationId: locationId,
         title: response[1][0],
-        text: response[2][0]
+        text: response[2][0],
+        pageURL: response[3][0]
       }
       lvm.addWikipedia(wikipediaData);
     }
     else {
-      console.log("No info found in Wikipedia");
+      lvm.addWikipediaNoInfo(locationId);
     }
   }
 
   wikipediaRequest(wikipediaURL, timeoutFunction, successFunction, apiFailFunction);
 }
 
-var wikipediaQueryRequest = function(query) {
+var wikipediaQueryRequest = function(query, locationId) {
   var wikipediaURL = "https://en.wikipedia.org/w/api.php?format=json&action=query&redirects=resolve&prop=extracts&exintro=&explaintext=&titles=" +
             query;
   var timeoutFunction = function() {
-    console.log('failed to get wikipedia content');
+    lvm.addWikipediaDetailFail();
   }
 
   var successFunction = function(response) {
@@ -65,17 +67,22 @@ var wikipediaQueryRequest = function(query) {
     var pages = response.query.pages;
     var page = getFirstChild(pages);
     var wikipediaData = {
+      locationId: locationId,
       longText: page.extract,
       pageid: page.pageid
     };
     lvm.addWikipediaDetail(wikipediaData);
-    wikipediaImagesRequest(page.pageid);
+    wikipediaImagesRequest(page.pageid, locationId);
+  }
+
+  var failFunction = function(error) {
+
   }
 
   wikipediaRequest(wikipediaURL, timeoutFunction, successFunction, apiFailFunction);
 }
 
-var wikipediaImagesRequest = function(query) {
+var wikipediaImagesRequest = function(query, locationId) {
   var wikipediaURL = "https://en.wikipedia.org/w/api.php?action=query&pageids=" +
             query +
             "&generator=images&prop=imageinfo&iiprop=url|dimensions|mime|user|timestamp&format=json&iiurlwidth=800";
@@ -99,7 +106,7 @@ var wikipediaImagesRequest = function(query) {
           images.push(imageData);
       }
     }
-    lvm.addWikipediaImages(images);
+    lvm.addWikipediaImages(images, locationId);
   }
   wikipediaRequest(wikipediaURL, timeoutFunction, successFunction, apiFailFunction);
 }

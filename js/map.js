@@ -1,4 +1,5 @@
 function initializeMap() {
+  var pacDiv = document.getElementById('pac-div');
   if (typeof google === 'object' && typeof google.maps === 'object') {
   	var mapOptions = {
   		center: {lat: 37.795, lng: -122.450},
@@ -20,7 +21,6 @@ function initializeMap() {
     /* Search Locations From Google Places */
     // Create the search box and link it to the UI element.
     var input = document.getElementById('pac-input');
-    var pacDiv = document.getElementById('pac-div');
     var searchBox = new google.maps.places.SearchBox(input);
     map.controls[google.maps.ControlPosition.TOP_LEFT].push(pacDiv);
 
@@ -103,10 +103,18 @@ function initializeMap() {
       });
       map.fitBounds(bounds);
     });
+
+    // Vanilla JS way to listen for resizing of the window
+    // and adjust map bounds
+    window.addEventListener('resize', function(e) {
+      //Make sure the map bounds get updated on page resize
+      map.fitBounds(mapBounds);
+    });
     return true;
   }
   else {
-    mvm.addMessage("Google Maps not loaded", "alert-danger");
+    pacDiv.remove();
+    mvm.addMessage("GoogleMaps","Google Maps not loaded", "alert-danger");
     return false;
   }
 }
@@ -235,11 +243,6 @@ function setAllMarkersMap(map) {
   }
 }
 
-// Vanilla JS way to listen for resizing of the window
-// and adjust map bounds
-window.addEventListener('resize', function(e) {
-  //Make sure the map bounds get updated on page resize
-  map.fitBounds(mapBounds);
-});
+
 
 
