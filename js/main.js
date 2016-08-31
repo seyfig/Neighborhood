@@ -51,26 +51,6 @@ $(function() {
     }
   });
 
-
-/*
-  $('.sidebar-button').click(function() {
-    if ($('.sidebar-hamburger').hasClass('expand')) {
-      $('.sidebar').animate({'left': '-180px'},600).removeClass('expand');
-      setTimeout(function() {
-        $('.sidebar-hamburger').removeClass('expand');
-        $('.sidebar').animate({'left': '-240px'},200);
-      },600);
-    }
-    else {
-      $('.sidebar').animate({'left': '-180px'},200);
-      setTimeout(function() {
-        $('.sidebar-hamburger').addClass('expand');
-        $('.sidebar').animate({'left': '0px'},600).addClass('expand');;
-      },200);
-    }
-  });
-
-*/
 })
 
 logger(5);

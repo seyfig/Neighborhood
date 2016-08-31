@@ -308,6 +308,11 @@ var locationViewModel = function() {
     self.searchWikipedia(location);
   };
 
+  this.emptyCurrentLocation = function() {
+    console.log("panel close clicked");
+    self.currentLocation(undefined);
+  };
+
   this.searchWikipedia = function(location) {
     //Wikipedia Information
     if(location.wikipediaStatus === 0) {

@@ -171,7 +171,8 @@ function createMapMarker(location) {
   // hover over a pin on a map.
   var titleWindow = new google.maps.InfoWindow({
     content: name,
-    maxWidth: 150
+    maxWidth: 150,
+    disableAutoPan: true
   });
 
   // info is detailed information window for current location

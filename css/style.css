@@ -4,6 +4,344 @@ html, body, main {
 }
 
 
+main {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.sidebar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  float: left;
+  padding: 10px;
+  z-index: 10;
+  height: 100%;
+  width: 240px;
+  background-color: #e6e6e6;
+  border-color: #adadad;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+
+.map {
+  height: 100%;
+  min-height: 480px;
+  background-color:#aaaaaa;
+}
+
+.messages {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  left: 0;
+  right: 0;
+  margin: 50px auto;
+  max-height: 50%;
+  overflow-y: auto;
+}
+
+.message-dismissall {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.google-search {
+  width: 240px;
+  margin: 10px;
+}
+
+.float-left {
+  float: left;
+}
+
+.float-right {
+  float: right;
+}
+
+.active {
+  color: blue;
+}
+
+.p-cursor {
+  cursor: pointer;
+}
+
+.location-list, .filter-list {
+  overflow-y: auto;
+}
+
+.filter-group {
+  width: 100%;
+}
+
+.filter-button {
+  text-align: left;
+}
+
+.filter-list {
+  width: 100%;
+  padding: 0 0 20px;
+  margin: -1px 0;
+  display: block;
+  background-color: #e6e6e6;
+  border: 2px solid #adadad;
+  border-radius: 4px;
+}
+
+.filter-item {
+  width: 100%;
+  height: 40px;
+}
+
+.list-group-label {
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  white-space: nowrap;
+}
+
+.list-group-item {
+  display: list-item;
+}
+
+.location-edit {
+  position: absolute;
+  right: 15px;
+  top: 10px;
+}
+
+.info-window {
+  max-height: 300px;
+  overflow: hidden;
+}
+
+.info-window > .panel-body {
+  overflow-y: auto;
+}
+
+.modal-button {
+  margin: -8px -15px 0 0;
+}
+
+.location-wikipedia-short-text {
+  width: 100%;
+  margin: 0;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 7;
+  max-height: 10em;
+}
+
+/* MODAL START */
+.modal {
+  padding: 30px 15px;
+  overflow: hidden !important;
+}
+
+.modal-dialog {
+  height: 100%;
+  margin: 0 auto;
+}
+
+.modal-content {
+  height: 100%;
+}
+
+.modal-header, .modal-footer {
+  height: 50px;
+  z-index: 10;
+  position: relative;
+}
+
+.modal-footer {
+  padding: 8px 15px;
+  bottom: 0;
+  position: absolute;
+  right: 0;
+  left: 0;
+}
+
+.modal-body {
+  height: 100%;
+  padding: 65px 15px;
+  top: -50px;
+}
+
+.detail-text-container {
+  height: 25%;
+  overflow-y: auto;
+}
+
+.image-container {
+  position: relative;
+  height: 75%;
+  padding: 10px 0 0 0;
+}
+
+.image-div {
+  float: left;
+  height: 100%;
+}
+
+.image {
+  max-width: 100%;
+  max-height: 100%;
+  top: 50%;
+  bottom: 50%;
+  left: 0;
+  right: 0;
+  position: absolute;
+  margin: auto;
+  padding: 0px 0 20px 0;
+  text-align: center;
+}
+
+.image-button-div {
+  width: 40px;
+  height: 40px;
+  z-index: 10;
+  top: 50%;
+  bottom: 50%;
+  margin-top: -20px;
+  position: relative;
+}
+
+.image-button-place-holder {
+  position: absolute;
+  height: 40px;
+  width: 40px;
+  opacity: 0.3;
+  padding: 0;
+  background-color: #337ab7;
+  border-color: #2e6da4;
+}
+
+.image-button {
+  position: absolute;
+  height: 40px;
+  width: 40px;
+  text-align: center;
+  opacity: 0.9;
+  padding: 0;
+  background: none;
+  border: none;
+}
+
+.image-button-icon {
+  font-size: 30px;
+  opacity: 0.9;
+  color: #eee;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  padding-top: 3px;
+}
+
+.image-button-icon:hover {
+  font-size: 34px;
+  opacity: 1;
+  color:white;
+}
+
+.pre-image-div {
+  float: left;
+  left: 0;
+}
+
+.next-image-div {
+  float: right;
+  right: 0;
+}
+
+.image-div {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  padding: 0 50px 20px 50px;
+}
+
+.image-info {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  z-index: 11;
+  width: 100%;
+}
+
+/* MODAL END */
+/* OPTIONS START */
+.options {
+  position: fixed;
+  right: 10px;
+  top: 10px;
+  width: 40px;
+  height: 40px;
+}
+
+.options-button-div {
+  position: absolute;
+  width: 100%;
+  height: 40px;
+  z-index: 10;
+}
+
+.options-panel {
+  position: absolute;
+  background-color: white;
+  width: 140px;
+  right: 0;
+  padding: 0;
+  margin-bottom: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+
+.options-panel-heading {
+  height: 34px;
+}
+
+.options-panel-body {
+  padding: 0;
+}
+
+.options-header {
+  margin-top:0;
+}
+
+.option-list {
+  margin-bottom: 0;
+}
+
+.fake-checkbox {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+  top: 0;
+  left: 0;
+}
+
+.option-item-label {
+  text-transform: capitalize;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+/* OPTIONS END*/
+
+/* MEDIA START */
+/* TODO TEST WHICH OVERRIDE */
 @media only screen and (min-width: 768px) {
   main {
     left: 240px;
@@ -85,14 +423,20 @@ html, body, main {
     right: 0;
     margin: auto;
     z-index: 20;
-    background-color: #e6e6e6;
-    border-color: #adadad;
-    border: 1px solid transparent;
-    border-radius: 4px;
-    padding: 10px;
     overflow-x: hidden;
     overflow-y: auto;
     max-height: 40%;
+    min-width: 240px;
+  }
+
+  .modal-button {
+    margin: -8px 0 0 0 !important;
+  }
+
+  /*TODO REPLACAE INFO WINDOW HEADER*/
+
+/*  .info-window-header {
+    height: 40px;
   }
 
   .info-window-header > h3 {
@@ -103,334 +447,13 @@ html, body, main {
 
   .info-window-header > h4 {
     float: right;
-    margin: 0;
+    margin: 5px 0 0;
+  }*/
+
+  .info-window-header > h4 {
+    font-size: 14px;
   }
 
-
 }
 
 
-main {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-}
-
-.sidebar {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  float: left;
-  padding: 10px;
-  z-index: 10;
-  height: 100%;
-  width: 240px;
-  background-color: #e6e6e6;
-  border-color: #adadad;
-  border: 1px solid transparent;
-  border-radius: 4px;
-}
-
-.map {
-  height: 100%;
-  min-height: 480px;
-  background-color:#aaaaaa;
-}
-
-.messages {
-  position: absolute;
-  top: 0;
-  width: 50%;
-  left: 0;
-  right: 0;
-  margin: 50px auto;
-  height: 50%;
-  overflow-y: auto;
-}
-
-.message-dismissall {
-  width: 100%;
-  margin-bottom: 20px;
-}
-
-.google-search {
-  width: 240px;
-  margin: 10px;
-}
-
-.float-left {
-  float: left;
-}
-
-.float-right {
-  float: right;
-}
-
-.active {
-  color: blue;
-}
-
-.p-cursor {
-  cursor: pointer;
-}
-
-.danger {
-  color: red;
-}
-
-.location-list, .filter-list {
-  overflow-y: auto;
-}
-
-.filter-group {
-  width: 100%;
-}
-
-.filter-button {
-  text-align: left;
-}
-
-.filter-list {
-  width: 100%;
-  padding: 0 0 20px;
-  margin: -1px 0;
-  display: block;
-  background-color: #e6e6e6;
-  border: 2px solid #adadad;
-  border-radius: 4px;
-}
-
-.filter-item {
-  width: 100%;
-  height: 40px;
-}
-
-.filter-item-label {
-  max-width: 160px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: block;
-  white-space: nowrap;
-}
-
-.list-group-item {
-  display: list-item;
-}
-
-.location-name {
-  max-width: 160px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: block;
-    white-space: nowrap;
-}
-
-.location-edit {
-  position: absolute;
-  right: 15px;
-  top: 10px;
-}
-
-.image-div {
-  float: left;
-  height: 100%;
-}
-/*
-.image {
-  max-width: 90%;
-  max-height: 90%;
-}*/
-
-.image {
-  max-width: 100%;
-  max-height: 100%;
-  top: 50%;
-  bottom: 50%;
-  left: 0;
-  right: 0;
-  position: absolute;
-  margin: auto;
-  padding: 0px 0 20px 0;
-  text-align: center;
-}
-
-/* TODO MODAL TEST */
-.modal {
-  padding: 30px 15px;
-  overflow: hidden !important;
-}
-
-.modal-dialog {
-  height: 100%;
-  margin: 0 auto;
-}
-
-.modal-content {
-  height: 100%;
-}
-
-.modal-header, .modal-footer {
-  height: 50px;
-  z-index: 10;
-  position: relative;
-}
-
-.modal-footer {
-  padding: 8px 15px;
-  bottom: 0;
-  position: absolute;
-  right: 0;
-  left: 0;
-}
-
-.modal-body {
-  height: 100%;
-  padding: 65px 15px;
-  top: -50px;
-}
-
-.detail-text-container {
-  height: 25%;
-  overflow-y: auto;
-}
-
-.image-container {
-  position: relative;
-  height: 75%;
-  padding: 10px 0 0 0;
-}
-/*
-.image-button-div {
-  width: 70px;
-  height: 40px;
-  z-index: 10;
-  top: 50%;
-  bottom: 50%;
-  margin-top: -20px;
-  position: absolute;
-  padding: 0 15px;
-}*/
-
-.image-button-div {
-  width: 40px;
-  height: 40px;
-  z-index: 10;
-  top: 50%;
-  bottom: 50%;
-  margin-top: -20px;
-  position: relative;
-}
-
-.image-button-place-holder {
-  position: absolute;
-  height: 40px;
-  width: 40px;
-  opacity: 0.3;
-  padding: 0;
-  background-color: #337ab7;
-  border-color: #2e6da4;
-}
-
-.image-button {
-  position: absolute;
-  height: 40px;
-  width: 40px;
-  text-align: center;
-  opacity: 0.9;
-  padding: 0;
-  background: none;
-  border: none;
-}
-
-.image-button-icon {
-  font-size: 30px;
-  opacity: 0.9;
-  color: #eee;
-  z-index: 10;
-  width: 100%;
-  height: 100%;
-  padding-top: 3px;
-}
-
-.image-button-icon:hover {
-  font-size: 34px;
-  opacity: 1;
-  color:white;
-}
-
-.pre-image-div {
-  float: left;
-  left: 0;
-}
-
-.next-image-div {
-  float: right;
-  right: 0;
-}
-
-.image-div {
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  padding: 0 50px 20px 50px;
-}
-
-.image-info {
-  bottom: 0;
-  left: 0;
-  position: absolute;
-  z-index: 11;
-  width: 100%;
-}
-
-.options {
-  position: fixed;
-  right: 10px;
-  top: 10px;
-  width: 40px;
-  height: 40px;
-  overflow: hidden;
-}
-
-.options-button-div {
-  position: absolute;
-  width: 100%;
-  height: 40px;
-  z-index: 10;
-}
-
-.options-div {
-  position: absolute;
-  background-color: white;
-  width: 140px;
-  right: 0;
-  padding: 10px;
-  overflow-x: hidden;
-  overflow-y: auto;
-  border: 1px solid transparent;
-  border-radius: 4px;
-}
-
-.options-header {
-  margin-top:0;
-}
-
-.fake-checkbox {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  z-index: 5;
-  top: 0;
-  left: 0;
-}
-
-.option-item-label {
-  text-transform: capitalize;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
