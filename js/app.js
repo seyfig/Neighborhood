@@ -119,6 +119,7 @@ var locationViewModel = function() {
   this.editMode = ko.observable(false);
   this.filterMode = ko.observable(false);
   this.wikipediaMode = ko.observable(false);
+  this.apiMode = ko.observable(false);
   this.optionsMode = ko.observable(false);
   this.locations = {};
 
@@ -143,7 +144,7 @@ var locationViewModel = function() {
         name: location.name()
       };
       location.marker = createMapMarker(locationData);
-      location.marker.location = location;
+      location.marker.locationId = location.id;
     });
   };
 
@@ -267,6 +268,14 @@ var locationViewModel = function() {
     console.log(self);
   };
 
+  this.getLocation = function(locationId) {
+    return self.locations[locationId];
+  };
+
+  this.getApiObject = function(api, locationId) {
+    return self.locations[locationId].apiObjects()[api]();
+  }
+
   this.addLocation = function(placeData) {
     var place = new Place(placeData);
     place.location({
@@ -297,7 +306,7 @@ var locationViewModel = function() {
     self.filterList();
   }
 
-  this.selectLocation = function(location,event) {
+  this.selectLocation = function(location) {
     self.currentLocation(location);
     if (self.isGoogleMapsLoaded) {
       location.marker.selectLocation();
@@ -305,28 +314,17 @@ var locationViewModel = function() {
         map.setCenter(location.marker.getPosition());
       }
     }
-    self.searchWikipedia(location);
+    mc.apiRequestAll(location);
   };
+
+  this.selectLocationById = function(locationId) {
+    var location = self.getLocation(locationId);
+    self.selectLocation(location);
+  }
 
   this.emptyCurrentLocation = function() {
-    console.log("panel close clicked");
     self.currentLocation(undefined);
   };
-
-  this.searchWikipedia = function(location) {
-    //Wikipedia Information
-    if(location.wikipediaStatus === 0) {
-      location.wikipediaStatus = 1;
-      mvm.addMessage("Wikipedia", "Connecting to Wikipedia", "alert-info", 8000);
-      wikipediaSearchRequest(location.wikipediaQuery(), location.id);
-    }
-    else if (location.wikipediaStatus === 1) {
-      mvm.addMessage("Wikipedia",
-                    "Call for " + location.name() + " on process",
-                    "alert-warning",
-                    2000);
-    }
-  }
 
   this.showMarkerTitle = function(location) {
     location.marker.showTitleWindow();
@@ -348,90 +346,82 @@ var locationViewModel = function() {
     self.filterMode(!self.filterMode());
   };
 
-  this.addWikipedia = function(wikipediaData) {
-    console.dir(wikipediaData);
-    console.log(wikipediaData);
-    var locationId = wikipediaData.locationId;
-    var location = self.locations[locationId];
-    var wikipedia = new Wikipedia(wikipediaData);
-    location.wikipedia(wikipedia);
-    location.wikipediaStatus = 2;
+  this.openApiMode = function(apiObject) {
+    var locationId = apiObject.locationId;
+    var location = self.getLocation(locationId);
+    var api = apiObject.api();
+    if (!apiObject.isDetailLoaded()){
+      mc.apiRequestDetail(api, apiObject.queryDetail(), locationId);
+    }
+    else if (!apiObject.isImagesLoaded()) {
+      mc.apiRequestImages(api, apiObject.queryImages(), locationId);
+    }
+    location.currentApiObject(apiObject);
+    self.apiMode(true);
   };
 
-  this.addWikipediaFail = function(locationId) {
-    var location = self.locations[locationId];
-    location.wikipediaStatus = 0;
-    mvm.addMessage("Wikipedia","Couldn't connect to Wikipedia for now!", "alert-danger", 8000);
+  this.closeApiMode = function() {
+    self.apiMode(false);
+  }
+
+  // TODO MOVE TO MAINCONTROLLER
+  this.addResponseFail = function(api, locationId) {
+    var location = self.getLocation(locationId);
+    location.apiRequestStatus[api] = 0;
+    mvm.addMessage(api,
+                  "Couldn't connect to " +
+                    api +
+                    " for now!",
+                  "alert-danger",
+                  8000);
   };
 
-  this.addWikipediaNoInfo = function(locationId) {
-    var location = self.locations[locationId];
-    if (location.wikipediaSearchStatus() === 0) {
-      location.wikipediaSearchStatus(1);
-      location.wikipediaStatus = 0;
-      self.searchWikipedia(location);
+  // TODO MOVE TO MAINCONTROLLER
+  this.addResponseNoInfo = function(api, locationId, query) {
+    var location = self.getLocation(locationId);
+    if (!location.apiSearchStatus[api] || location.apiSearchStatus[api] === 0) {
+      location.apiSearchStatus[api] = 1;
+      location.apiRequestStatus[api] = 0;
+      mc.apiRequest(api, location);
     }
-    else if (location.wikipediaSearchStatus() === 1) {
-      location.wikipediaStatus = 3;
+    else if (location.apiSearchStatus[api] === 1) {
+      location.apiRequestStatus[api] = 3;
     }
-    mvm.addMessage("Wikipedia",
-                  "No Wikipedia Information for " + location.wikipediaQuery(),
+    mvm.addMessage(api,
+                  "No " +
+                    api +
+                    " Information for " +
+                    query,
                   "alert-warning",
                   8000);
   };
 
-  this.openWikipediaMode = function() {
-    var location = self.currentLocation();
-    var wikipedia = location.wikipedia();
-    if (!wikipedia.isDetailLoaded()){
-      wikipediaQueryRequest(wikipedia.title, location.id);
-    }
-    else if (!wikipedia.isImagesLoaded()) {
-      wikipediaImagesRequest(wikipedia.pageid, location.id);
-    }
-    self.wikipediaMode(true);
+  // TODO MOVE TO MAINCONTROLLER
+  this.addResponseDetailFail = function(api, locationId) {
+    self.getApiObject(api, locationId).
+      description("Description can not be loaded this time.");
   };
 
-  this.closeWikipediaMode = function() {
-    self.wikipediaMode(false);
-  }
-
-  this.addWikipediaDetail = function(wikipediaData) {
-    var locationId = wikipediaData.locationId;
-    var location = self.locations[locationId];
-    var wikipedia = location.wikipedia();
-    wikipedia.longText(wikipediaData.longText);
-    wikipedia.pageid = wikipediaData.pageid;
-    wikipedia.isDetailLoaded(true);
+  this.addResponseImagesFail = function(api, locationId) {
+    self.getApiObject(api, locationId).
+      imagesAlt("Image list can not be loaded this time.");
   };
 
-  this.addWikipediaDetailFail = function() {
-    var wikipedia = self.currentLocation().wikipedia();
-    wikipedia.longText("Detail text can not be loaded this time.")
-  }
-
-  this.addWikipediaImages = function(images, locationId) {
-    var location = self.locations[locationId];
-    var wikipedia = location.wikipedia();
-    images.forEach(function(imageData) {
-      wikipedia.images.push(new WikipediaImage(imageData));
-    });
-    wikipedia.currentImage(wikipedia.images()[0]);
-    wikipedia.isImagesLoaded(true);
-  };
-
-  this.changeImage = function(wikipedia ,event) {
-    var index = wikipedia.images.indexOf(wikipedia.currentImage());
-    var images = wikipedia.images();
+  this.changeImage = function(apiObject, event) {
+    var index = apiObject.images.indexOf(apiObject.currentImage());
+    var images = apiObject.images();
     var length = images.length;
-    if  (event.toElement.classList.contains("pre-image")) {
+    index += length;
+    if  (event.delegateTarget.classList.contains("pre-image")) {
       index = (index - 1) % length;
     }
     else {
       index = (index + 1) % length;
     }
-    wikipedia.currentImage(images[index]);
+    apiObject.currentImage(images[index]);
   };
+
+
 
   this.toggleOptionsMode = function() {
     self.optionsMode(!self.optionsMode());

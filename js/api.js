@@ -7,8 +7,8 @@ var getFirstChild = function(list) {
   return item;
 }
 
-var wikipediaRequest = function(url, timeoutFunction, successFunction, failFunction) {
-  var wikiRequestTimeout = setTimeout(timeoutFunction,8000);
+var wikipediaRequest = function(url, successFunction, failFunction) {
+  var wikiRequestTimeout = setTimeout(failFunction,8000);
   $.ajax({
     type: "GET",
     url: url,
@@ -20,20 +20,28 @@ var wikipediaRequest = function(url, timeoutFunction, successFunction, failFunct
   })
   .fail(failFunction);
 }
+var apiSuccessFunction = function(response,a,b,c) {
+    console.log(response);
+    console.log(a);
+    console.log(b);
+    console.log(c);
+  };
 
 var apiFailFunction = function(jqxhr, textStatus, error) {
       console.log("w - error");
       console.log(jqxhr);
       console.log(textStatus);
       console.log(error);
-}
+};
 
-var wikipediaSearchRequest = function(query, locationId) {
+var wikipediaSearchRequest = function(queryObject) {
+  var query = queryObject.query;
+  var locationId = queryObject.locationId;
   var wikipediaURL = "http://en.wikipedia.org/w/api.php?action=opensearch&search=" +
             query +
             "&format=json&callback=wikiCallback&redirects=resolve&prop=extracts&exintro=&explaintext=&rvprop=content";
-  var timeoutFunction = function() {
-    lvm.addWikipediaFail(locationId);
+  var failFunction = function() {
+    lvm.addResponseFail("Wikipedia",locationId);
   }
 
   var successFunction = function(response) {
@@ -45,21 +53,22 @@ var wikipediaSearchRequest = function(query, locationId) {
         text: response[2][0],
         pageURL: response[3][0]
       }
-      lvm.addWikipedia(wikipediaData);
+      mc.addResponseData("Wikipedia", wikipediaData);
     }
     else {
-      lvm.addWikipediaNoInfo(locationId);
+      lvm.addResponseNoInfo("Wikipedia", locationId, query);
     }
   }
 
-  wikipediaRequest(wikipediaURL, timeoutFunction, successFunction, apiFailFunction);
+  wikipediaRequest(wikipediaURL, successFunction, failFunction);
 }
 
 var wikipediaQueryRequest = function(query, locationId) {
   var wikipediaURL = "https://en.wikipedia.org/w/api.php?format=json&action=query&redirects=resolve&prop=extracts&exintro=&explaintext=&titles=" +
             query;
-  var timeoutFunction = function() {
-    lvm.addWikipediaDetailFail();
+  var failFunction = function() {
+    lvm.addResponseDetailFail("Wikipedia", locationId);
+    lvm.addResponseImagesFail("Wikipedia", locationId);
   }
 
   var successFunction = function(response) {
@@ -68,26 +77,21 @@ var wikipediaQueryRequest = function(query, locationId) {
     var page = getFirstChild(pages);
     var wikipediaData = {
       locationId: locationId,
-      longText: page.extract,
-      pageid: page.pageid
+      description: page.extract,
+      pageId: page.pageid
     };
-    lvm.addWikipediaDetail(wikipediaData);
+    mc.addResponseDetail("Wikipedia", wikipediaData);
     wikipediaImagesRequest(page.pageid, locationId);
   }
-
-  var failFunction = function(error) {
-
-  }
-
-  wikipediaRequest(wikipediaURL, timeoutFunction, successFunction, apiFailFunction);
+  wikipediaRequest(wikipediaURL, successFunction, failFunction);
 }
 
 var wikipediaImagesRequest = function(query, locationId) {
   var wikipediaURL = "https://en.wikipedia.org/w/api.php?action=query&pageids=" +
             query +
             "&generator=images&prop=imageinfo&iiprop=url|dimensions|mime|user|timestamp&format=json&iiurlwidth=800";
-  var timeoutFunction = function() {
-    console.log('failed to get wikipedia images');
+  var failFunction = function() {
+    lvm.addResponseImagesFail("Wikipedia", locationId);
   }
   var successFunction = function(response) {
     var pages = response.query.pages;
@@ -106,7 +110,83 @@ var wikipediaImagesRequest = function(query, locationId) {
           images.push(imageData);
       }
     }
-    lvm.addWikipediaImages(images, locationId);
+    mc.addResponseImages("Wikipedia", images, locationId);
   }
-  wikipediaRequest(wikipediaURL, timeoutFunction, successFunction, apiFailFunction);
+  wikipediaRequest(wikipediaURL, successFunction, failFunction);
+}
+
+/* ======= FOURSQUARE ======= */
+
+var foursquareRequest = function(url, successFunction, failFunction) {
+  var clientId = "RKFO2JAPI2Q0TOWDDMZJ3C2R2G3PCPIZ0MAOBDNKECSKRNBD";
+  var clientSecret = "EEUKXUDZQ23RTUARN3CRVFA4AXBSJTDNA3BU5UK0OXGNVIUW";
+  url += "client_id=" +
+            clientId +
+            "&client_secret=" +
+            clientSecret +
+            "&v=20130815";
+  $.ajax({
+    type: "GET",
+    url: url
+  })
+  .done(successFunction)
+  .fail(failFunction);
+}
+
+
+var foursquareSearchRequest = function(queryObject) {
+  var location = queryObject.location;
+  var query = queryObject.query;
+  var locationId = queryObject.locationId;
+  var locationString = location.lat.toString() +
+                      "," +
+                      location.lng.toString();
+  var url = "https://api.foursquare.com/v2/venues/search?ll=" +
+            locationString +
+            "&limit=1&query=" +
+            query +
+            "&";
+  var successFunction = function(response) {
+    var venueId = response.response.venues[0].id;
+    var foursquareData = {
+      locationId: locationId,
+      pageId: venueId
+    };
+    mc.addResponseData("Foursquare", foursquareData);
+  };
+  var failFunction = function() {
+    lvm.addResponseFail("Foursquare",locationId);
+  }
+  foursquareRequest(url, successFunction, failFunction);
+}
+
+var foursquareQueryRequest = function(venueId, locationId) {
+  var url = "https://api.foursquare.com/v2/venues/" +
+            venueId +
+            "?";
+
+  var successFunction = function(response) {
+    var venue = response.response.venue;
+    var images = venue.photos.groups[0].items;
+    for (var i = 0; i < images.length; i++) {
+      images[i].descriptionurl = venue.canonicalUrl +
+                              "?openPhotoId=" +
+                              images[i].id;
+    }
+    var foursquareData = {
+      locationId: locationId,
+      pageURL: venue.canonicalUrl,
+      description: venue.description,
+      rating: venue.rating,
+      shortURL: venue.shortUrl
+    };
+    mc.addResponseDetail("Foursquare", foursquareData);
+    mc.addResponseImages("Foursquare", images, locationId);
+  }
+
+  var failFunction = function() {
+    lvm.addResponseDetailFail("Foursquare", locationId);
+    lvm.addResponseImagesFail("Foursquare", locationId);
+  }
+  foursquareRequest(url, successFunction, failFunction);
 }

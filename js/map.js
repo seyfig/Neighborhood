@@ -211,7 +211,7 @@ function createMapMarker(location) {
 
   google.maps.event.addListener(marker, 'click', function(args) {
     // Set current location of Location View Model to Marker's location
-    lvm.selectLocation(this.location);
+    lvm.selectLocationById(this.locationId);
   });
 
 

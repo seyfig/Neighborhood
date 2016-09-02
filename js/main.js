@@ -8,18 +8,15 @@ var logger = function(u) {
 mvm = new messageViewModel();
 ko.applyBindings(mvm, document.getElementById("messages"));
 lvm = new locationViewModel();
-logger(1);
+mc = new mainController();
 ko.applyBindings(lvm, document.getElementById("locations"));
 ko.applyBindings(lvm, document.getElementById("wikipediaModal"));
 ko.applyBindings(lvm, document.getElementById("options"));
-logger(2);
 $(function() {
   var isMapInitialized = initializeMap();
   var d = new Date();
-  logger(3);
   if (isMapInitialized) {
     lvm.initGoogleMaps();
-    logger(4);
   }
 
 
@@ -52,6 +49,4 @@ $(function() {
   });
 
 })
-
-logger(5);
 

@@ -178,6 +178,9 @@ main {
   overflow-y: auto;
 }
 
+.images-alt-container {
+  margin: 20px 0;
+}
 .image-container {
   position: relative;
   height: 75%;
