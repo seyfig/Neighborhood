@@ -2,6 +2,16 @@ var app = app || {};
 "use strict";
 
 (function() {
+
+  var textFromTypeName = function(typeName) {
+    var nameArray = typeName.split('_');
+    var textArray = [];
+    nameArray.forEach(function(name) {
+      textArray.push(name[0].toUpperCase() + name.slice(1));
+    });
+    return textArray.join(' ');
+  };
+
   var locationViewModel = function() {
     // Initialize without Google Maps
     var self = this;
@@ -162,25 +172,41 @@ var app = app || {};
       self.locations[location.id] = location;
     };
 
-    initialLocations.forEach(function(location) {
+    app.initialLocations.forEach(function(location) {
       self.insertLocation( new Place(location));
       self.addTypeFromText(location.types);
     });
     self.locationList(self.fullLocationList.slice(0));
     self.currentLocation = ko.observable();
 
-    // Data persistence
-    // TODO
     this.save = function() {
-      console.log(self);
+      var localLocations = [];
+      self.fullLocationList().forEach(function(location) {
+        localLocations.push(location.toLocalStorage());
+      });
+      localStorage.setItem('locations-knockoutjs', JSON.stringify(localLocations));
     };
 
     this.getLocation = function(locationId) {
-      return self.locations[locationId];
+      var location = self.locations[locationId];
+      if (!location) {
+        console.log("Location not found with id:" + locationId);
+        return;
+      }
+      else {
+        return location;
+      }
     };
 
     this.getApiObject = function(api, locationId) {
-      return self.locations[locationId].apiObjects()[api]();
+      var apiObject = self.locations[locationId].apiObjects()[api]();
+      if (!apiObject) {
+        console.log((api ? api : "ApiObject") + " not found");
+        return;
+      }
+      else {
+        return apiObject;
+      }
     }
 
     this.addLocation = function(placeData) {
@@ -204,9 +230,12 @@ var app = app || {};
     }
 
     this.removeLocation = function(location) {
+      if (self.currentLocation() === location) {
+        self.emptyCurrentLocation();
+      }
       self.locations[location.id] = undefined;
       self.fullLocationList.remove(location);
-      setMarkerMap(location.marker, null);
+      app.map.setMarkerMap(location.marker, null);
       location.marker = undefined;
       location = undefined;
       self.save();
@@ -264,6 +293,9 @@ var app = app || {};
       // This initial object may be used to request more information
       var api = apiData.api;
       var location = self.getLocation(apiData.locationId);
+      if (!location) {
+        return;
+      }
       var apiObject = ko.observable(new self.newApiObject[api](apiData));
       var apiObjects = location.apiObjects();
       apiObjects[api] = apiObject;
@@ -275,6 +307,9 @@ var app = app || {};
       // Fail to access API
       var api = queryObject.api;
       var location = self.getLocation(queryObject.locationId);
+      if (!location) {
+        return;
+      }
       location.apiRequestStatus[api] = 0;
       app.mvm.addMessage(api,
                     "Couldn't connect to " +
@@ -292,6 +327,9 @@ var app = app || {};
       // In order to prevent sending new requests for the same apiObject
       var api = queryObject.api;
       var location = self.getLocation(queryObject.locationId);
+      if (!location) {
+        return;
+      }
       if (!location.apiSearchStatus[api] || location.apiSearchStatus[api] === 0) {
         location.apiSearchStatus[api] = 1;
         location.apiRequestStatus[api] = 0;
@@ -320,6 +358,9 @@ var app = app || {};
     this.apiResponseDetail = function(apiData) {
       var apiObject = self.getApiObject(apiData.api,
                                         apiData.locationId);
+      if (!apiObject) {
+        return;
+      }
       for(var property in apiData) {
         if (typeof apiObject[property] === "function") {
           apiObject[property](apiData[property]);
@@ -334,6 +375,9 @@ var app = app || {};
     this.apiResponseImages = function(apiData) {
       var apiObject = self.getApiObject(apiData.api,
                                         apiData.locationId);
+      if (!apiObject) {
+        return;
+      }
       apiData.images.forEach(function (imageData) {
         apiObject.images.push(apiObject.newImage(imageData));
       });
@@ -342,13 +386,21 @@ var app = app || {};
     };
 
     this.apiResponseDetailFail = function(queryObject) {
-      self.getApiObject(queryObject.api, queryObject.locationId).
-        description("Description can not be loaded this time.");
+      var apiObject = self.getApiObject(apiData.api,
+                                        apiData.locationId);
+      if (!apiObject) {
+        return;
+      }
+      apiObject.description("Description can not be loaded this time.");
     };
 
     this.apiResponseImagesFail = function(queryObject) {
-      self.getApiObject(queryObject.api, queryObject.locationId).
-        imagesAlt("Image list can not be loaded this time.");
+      var apiObject = self.getApiObject(apiData.api,
+                                        apiData.locationId);
+      if (!apiObject) {
+        return;
+      }
+      apiObject.imagesAlt("Image list can not be loaded this time.");
     };
 
 
@@ -356,7 +408,12 @@ var app = app || {};
 
     this.selectLocationById = function(locationId) {
       var location = self.getLocation(locationId);
-      self.selectLocation(location);
+      if (location) {
+        self.selectLocation(location);
+      }
+      else {
+        self.emptyCurrentLocation();
+      }
     }
 
     this.emptyCurrentLocation = function() {
@@ -387,6 +444,13 @@ var app = app || {};
       var locationId = apiObject.locationId;
       var location = self.getLocation(locationId);
       var api = apiObject.api();
+      if (!location) {
+        return;
+      }
+      if (!api) {
+        console.log("Api not found");
+        return;
+      }
       if (!apiObject.isDetailLoaded()){
         self.apiRequestDetail(apiObject.queryDetail());
       }

@@ -13,17 +13,21 @@ var Place = function(data) {
   this.name = ko.observable(data.name);
   this.location = ko.observable(data.geometry.location);
   this.formatted_address = ko.observable(data.formatted_address);
-  var address = data.formatted_address.split(',');
-  if (address.length === 3) {
-    address.unshift("");
+  var isAddressParsable = false;
+  if (data.formatted_address) {
+    var address = data.formatted_address.split(',');
+    if (address.length === 3) {
+      address.unshift("");
+    }
+    if (address.length === 4) {
+      isAddressParsable = true;
+      this.street = ko.observable(address[0].trim());
+      this.city = ko.observable(address[1].trim());
+      this.state = ko.observable(address[2].trim());
+      this.country = ko.observable(address[3].trim());
+    }
   }
-  if (address.length === 4) {
-    this.street = ko.observable(address[0].trim());
-    this.city = ko.observable(address[1].trim());
-    this.state = ko.observable(address[2].trim());
-    this.country = ko.observable(address[3].trim());
-  }
-  else {
+  if (!isAddressParsable) {
     this.street = ko.observable("");
     this.city = ko.observable("");
     this.state = ko.observable("");
@@ -74,6 +78,16 @@ var Place = function(data) {
     };
     return queryObject;
   };
+  this.toLocalStorage = function() {
+    return {
+      name: this.name(),
+      types: this.types(),
+      geometry: {
+        location: this.location()
+      },
+      formatted_address: this.formatted_address()
+    };
+  }
 };
 
 var Message = function(data) {
