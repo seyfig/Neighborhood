@@ -1,3 +1,5 @@
+"use strict";
+
 var Type = function(data) {
   this.name = ko.observable(data.name);
   this.text = ko.observable(data.text);
@@ -57,11 +59,13 @@ var Place = function(data) {
   this.queryObject = function(api) {
     var query = this.name();
     // TODO
+    // TODOF how is it possible without following line
     //if (api === "Wikipedia") {
     if (api && !this.apiSearchStatus[api]) {
       query += " " + this.city();
     }
     var queryObject = {
+      api: api,
       locationId: this.id,
       location: this.location(),
       name: this.name(),
@@ -109,10 +113,18 @@ var Wikipedia = function(data) {
     return new WikipediaImage(imageData);
   };
   this.queryDetail = function() {
-    return this.title;
+    return {
+      query: this.title,
+      locationId: this.locationId,
+      api: this.api()
+    };
   };
   this.queryImages = function() {
-    return this.pageId;
+    return {
+      query: this.pageId,
+      locationId: this.locationId,
+      api: this.api()
+    };
   }
 }
 
@@ -134,7 +146,11 @@ var Foursquare = function(data) {
     return new FoursquareImage(imageData);
   };
   this.queryDetail = function() {
-    return this.pageId;
+    return {
+      query: this.pageId,
+      locationId: this.locationId,
+      api: this.api()
+    };
   };
 }
 
