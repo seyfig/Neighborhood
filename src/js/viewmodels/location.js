@@ -1,8 +1,7 @@
 var app = app || {};
-"use strict";
 
 (function() {
-
+  "use strict";
   var textFromTypeName = function(typeName) {
     var nameArray = typeName.split('_');
     var textArray = [];
@@ -37,14 +36,14 @@ var app = app || {};
     this.apiList = ["Wikipedia", "Foursquare"];
     // TODO ADD NEW API
     this.newApiObject = {};
-    this.newApiObject["Wikipedia"] = Wikipedia;
-    this.newApiObject["Foursquare"] = Foursquare;
+    this.newApiObject.Wikipedia = Wikipedia;
+    this.newApiObject.Foursquare = Foursquare;
 
     // Add Google Maps Functions
     this.initGoogleMaps = function() {
       this.isGoogleMapsLoaded = true;
       self.createLocationMarker(self.fullLocationList());
-    }
+    };
 
     // Create marker and, assign location to marker
     this.createLocationMarker = function(locations) {
@@ -88,10 +87,11 @@ var app = app || {};
         var fullList = self.fullLocationList();
         fullList.forEach(function(location) {
           var toAdd = true;
+          var i = 0;
           if (isSearch) {
             var searchWords = searchText.split(" ");
             var name = location.name().toLowerCase();
-            for (var i = 0; i < searchWords.length; i++) {
+            for (i = 0; i < searchWords.length; i++) {
               var searchWord = searchWords[i].trim();
               if (searchWord.length > 0) {
                 if (name.indexOf(searchWord) < 0) {
@@ -105,7 +105,7 @@ var app = app || {};
             var type = location.types();
             var typeList = self.selectedTypes();
             var isInList = false;
-            for (var i = 0; i < typeList.length; i++) {
+            for (i = 0; i < typeList.length; i++) {
               if (type.indexOf(typeList[i]) >= 0) {
                 isInList = true;
               }
@@ -140,7 +140,7 @@ var app = app || {};
           };
           self.typeList.push(new Type(type));
         }
-      })
+      });
     };
 
     this.addTypeFromName = function(typeNames) {
@@ -207,7 +207,7 @@ var app = app || {};
       else {
         return apiObject;
       }
-    }
+    };
 
     this.addLocation = function(placeData) {
       var place = new Place(placeData);
@@ -227,7 +227,7 @@ var app = app || {};
       self.addTypeFromName(typeNames);
       self.save();
       self.filterList();
-    }
+    };
 
     this.removeLocation = function(location) {
       if (self.currentLocation() === location) {
@@ -240,7 +240,7 @@ var app = app || {};
       location = undefined;
       self.save();
       self.filterList();
-    }
+    };
 
     this.selectLocation = function(location) {
       self.currentLocation(location);
@@ -414,7 +414,7 @@ var app = app || {};
       else {
         self.emptyCurrentLocation();
       }
-    }
+    };
 
     this.emptyCurrentLocation = function() {
       self.currentLocation(undefined);
@@ -463,7 +463,7 @@ var app = app || {};
 
     this.closeApiMode = function() {
       self.apiMode(false);
-    }
+    };
 
     this.changeImage = function(apiObject, event) {
       var index = apiObject.images.indexOf(apiObject.currentImage());
@@ -486,8 +486,8 @@ var app = app || {};
     };
 
     this.clickCheckbox = function(option,e) {
-      $(e.target).siblings('input').click()
+      $(e.target).siblings('input').click();
     };
-  }
+  };
   app.lvm = new locationViewModel();
 })();

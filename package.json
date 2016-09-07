@@ -1,0 +1,36 @@
+{
+  "name": "neighborhood",
+  "version": "0.1.0",
+  "description": "Udacity Neighborhood Project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seyfig/Neighborhood.git"
+  },
+  "keywords": [
+    "Google",
+    "Maps",
+    "WikimediaApi",
+    "Foursquare",
+    "API"
+  ],
+  "author": "seyfig",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/seyfig/Neighborhood/issues"
+  },
+  "homepage": "https://github.com/seyfig/Neighborhood#readme",
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-contrib-csslint": "^1.0.0",
+    "grunt-contrib-cssmin": "^1.0.2",
+    "grunt-contrib-htmlmin": "^2.0.0",
+    "grunt-contrib-jshint": "^1.0.0",
+    "grunt-contrib-uglify": "^2.0.0",
+    "grunt-uncss": "^0.6.1",
+    "load-grunt-tasks": "^3.5.2"
+  }
+}

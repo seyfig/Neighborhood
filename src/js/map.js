@@ -1,7 +1,10 @@
 var app = app || {};
-"use strict";
+var map;
 
 (function() {
+  "use strict";
+  var markers = [];
+  var activeMarker;
   var mapController = function() {
     var self = this;
     this.initializeMap = function() {
@@ -16,7 +19,6 @@ var app = app || {};
           streetViewControl: false
       	};
       	map = new google.maps.Map(document.getElementById('map'), mapOptions);
-        markers = [];
 
         /* Search Locations From Google Places */
         // Create the search box and link it to the UI element.
@@ -34,7 +36,7 @@ var app = app || {};
         searchBox.addListener('places_changed', function() {
           var places = searchBox.getPlaces();
 
-          if (places.length == 0) {
+          if (places.length === 0) {
             return;
           }
 
@@ -117,7 +119,7 @@ var app = app || {};
         app.mvm.addMessage("GoogleMaps","Google Maps not loaded", "alert-danger");
         return false;
       }
-    }
+    };
 
     this.clearPlaceMarkers = function(placesMarkers) {
       // Clear out the old Google Places markers.
@@ -126,7 +128,7 @@ var app = app || {};
       });
       placesMarkers = [];
       return placesMarkers;
-    }
+    };
 
     this.setMapBounds = function(latlng) {
       if (!window.mapBounds) {
@@ -139,7 +141,7 @@ var app = app || {};
       map.fitBounds(bounds);
       // center the map
       map.setCenter(bounds.getCenter());
-    }
+    };
 
     this.setMapBoundsVisibleMarkers = function() {
       var bounds = new google.maps.LatLngBounds();
@@ -158,7 +160,7 @@ var app = app || {};
         map.setCenter(bounds.getCenter());
         window.mapBounds = bounds;
       }
-    }
+    };
 
     this.createMapMarker = function(location) {
       var lat = location.lat;
@@ -186,17 +188,17 @@ var app = app || {};
 
       marker.showTitleWindow = function() {
         titleWindow.open(map,marker);
-      }
+      };
       marker.hideTitleWindow = function() {
         titleWindow.close();
-      }
+      };
 
       marker.bounce = function() {
         marker.setAnimation(google.maps.Animation.BOUNCE);
         setTimeout(function() {
           marker.setAnimation(null);
         },700);
-      }
+      };
 
       marker.selectLocation = function() {
         if (typeof activeMarker === "object") {
@@ -205,7 +207,7 @@ var app = app || {};
         marker.setIcon('http://maps.google.com/mapfiles/ms/icons/blue-dot.png');
         marker.bounce();
         activeMarker = marker;
-      }
+      };
 
       google.maps.event.addListener(marker, 'mouseover', function() {
         marker.showTitleWindow();
@@ -224,21 +226,21 @@ var app = app || {};
       markers.push(marker);
 
       return marker;
-    }
+    };
 
     this.setAllMarkersVisible = function() {
       for (var i = 0; i< markers.length; i++) {
         markers[i].setVisible(true);
       }
-    }
+    };
     this.setMarkerMap = function(marker, map) {
       marker.setMap(map);
-    }
+    };
     this.setAllMarkersMap = function(map) {
       for (var i = 0; i < markers.length; i++) {
         markers[i].setMap(map);
       }
-    }
-  }
+    };
+  };
   app.map = new mapController();
 })();

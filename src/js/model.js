@@ -1,4 +1,4 @@
-"use strict";
+//"use strict";
 
 var Type = function(data) {
   this.name = ko.observable(data.name);
@@ -87,7 +87,7 @@ var Place = function(data) {
       },
       formatted_address: this.formatted_address()
     };
-  }
+  };
 };
 
 var Message = function(data) {
@@ -99,7 +99,7 @@ var Message = function(data) {
 // TODO INHERITANCE NOT WORKED
 // not used for now
 var apiObject = function(data) {
-  this.locationId = data.locationId,
+  this.locationId = data.locationId;
   this.description = ko.observable("Loading description");
   this.isDetailLoaded = ko.observable(false);
   this.isImagesLoaded = ko.observable(false);
@@ -111,7 +111,7 @@ var apiObject = function(data) {
 };
 
 var Wikipedia = function(data) {
-  this.locationId = data.locationId,
+  this.locationId = data.locationId;
   this.description = ko.observable("Loading description");
   this.isDetailLoaded = ko.observable(false);
   this.isImagesLoaded = ko.observable(false);
@@ -139,11 +139,11 @@ var Wikipedia = function(data) {
       locationId: this.locationId,
       api: this.api()
     };
-  }
-}
+  };
+};
 
 var Foursquare = function(data) {
-  this.locationId = data.locationId,
+  this.locationId = data.locationId;
   this.description = ko.observable("Loading description");
   this.isDetailLoaded = ko.observable(false);
   this.isImagesLoaded = ko.observable(false);
@@ -166,14 +166,14 @@ var Foursquare = function(data) {
       api: this.api()
     };
   };
-}
+};
 
 var ApiObjectImage = function(data) {
   this.url = ko.observable("");
   this.descriptionurl = ko.observable("");
   this.user = ko.observable("");
   this.localDateString = ko.observable("");
-}
+};
 
 var WikipediaImage = function(data) {
   this.dataurl = ko.observable(data.url);

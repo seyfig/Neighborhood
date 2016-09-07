@@ -1,14 +1,14 @@
-"use strict";
 var app = app || {};
 
 (function() {
+  "use strict";
   var messageViewModel = function() {
     var self = this;
     self.messageList = ko.observableArray([]);
-    this.addMessage = function(component, message, kind, duration) {
+    this.addMessage = function(component, text, kind, duration) {
       var message = new Message( {
         component: component,
-        text: message,
+        text: text,
         kind: kind
       });
       self.messageList.unshift(message);
@@ -35,7 +35,7 @@ var app = app || {};
 
     this.dismissAllMessages = function() {
       self.messageList.removeAll();
-    }
+    };
 
   };
   app.mvm = new messageViewModel();

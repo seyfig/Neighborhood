@@ -1,7 +1,7 @@
 var app = app || {};
-"use strict";
 
 (function() {
+  "use strict";
   // If local storage exists get data from local storage
   // Else use hard coded initial locations
   // In order to reset locations to initial locations,

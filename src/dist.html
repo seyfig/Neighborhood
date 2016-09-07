@@ -5,8 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Neighborhood</title>
-  <link rel="stylesheet" href="css/bootstrap.min.css">
-  <link href="css/style.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.min.css">
 </head>
 <body>
   <nav class="sidebar">
@@ -55,9 +54,6 @@
           </li>
         </ul>
       </div>
-
-
-
       <div id="info-window" class="panel panel-default form-group info-window hidden" data-bind="with: currentLocation(), css: {'hidden': !currentLocation()}">
         <div class="panel-heading info-window-header">
           <button id="info-window-close" type="button" class="close float-right" aria-label="Close" data-bind="click: $parent.emptyCurrentLocation">
@@ -133,7 +129,6 @@
       </div>
     </div>
   </main>
-
   <!-- Modal -->
   <div class="modal fade" id="wikipediaModal" tabindex="-1" role="dialog" aria-labelledby="wikipediaModalLabel" data-bind="with: currentLocation(), css: {'hidden': !currentLocation()}">
     <div class="modal-dialog" role="document" data-bind="with: currentApiObject()">
@@ -188,18 +183,10 @@
       </div>
     </div>
   </div>
-
-
-<script src="js/jquery-1.12.4.min.js"></script>
-<script src="js/lib/knockout-3.2.0.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script src="js/init.js"></script>
-<script src="js/map.js"></script>
-<script src="js/api.js"></script>
-<script src="js/model.js"></script>
-<script src="js/viewmodels/location.js"></script>
-<script src="js/viewmodels/message.js"></script>
-<script src="js/app.js"></script>
+<script src="js/lib/jquery-1.12.4.min.js"></script>
+<script src="js/lib/knockout-3.2.0.min.js"></script>
+<script src="js/lib/bootstrap.min.js"></script>
+<script src="js/main.min.js"></script>
 <script src="http://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyBCmSMFCDMw4lXHO7ntQACiwkdr2YRmB28"></script>
 </body>
 </html>

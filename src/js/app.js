@@ -1,11 +1,19 @@
-"use strict";
 var app = app || {};
 
-ko.applyBindings(app.mvm, document.getElementById("messages"));
-ko.applyBindings(app.lvm, document.getElementById("locations"));
-ko.applyBindings(app.lvm, document.getElementById("wikipediaModal"));
-ko.applyBindings(app.lvm, document.getElementById("options"));
-(function() {
+// (function() {
+
+
+
+// })();
+
+$(function() {
+
+  "use strict";
+  ko.applyBindings(app.mvm, document.getElementById("messages"));
+  ko.applyBindings(app.lvm, document.getElementById("locations"));
+  ko.applyBindings(app.lvm, document.getElementById("wikipediaModal"));
+  ko.applyBindings(app.lvm, document.getElementById("options"));
+
   var self = app;
 
   app.initGoogleMaps = function() {
@@ -17,9 +25,6 @@ ko.applyBindings(app.lvm, document.getElementById("options"));
   };
 
 
-})();
-
-$(function() {
   var isMapInitialized = app.map.initializeMap();
   var d = new Date();
   if (isMapInitialized) {
@@ -32,7 +37,7 @@ $(function() {
       setTimeout(function() {
         $('.sidebar-hamburger').removeClass('expand');
         //$('.sidebar').animate({'left': '-240px'},200);
-      },550)
+      },550);
     };
   var openSideBar = function() {
       $('.sidebar').addClass('expand').animate({'left': '0px'},800);
@@ -54,4 +59,4 @@ $(function() {
       $('main').on('click', closeSideBar);
     }
   });
-})
+});

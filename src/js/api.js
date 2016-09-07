@@ -1,18 +1,15 @@
 var app = app || {};
-"use strict";
 
 (function() {
+  "use strict";
   // New API's should be added as api constructors
   // and should be added to ApiController.apiList
-
-
-
 
   // TODO May not used???
   var apiModels = function() {
     self.Wikipedia = function(data) {
 
-    }
+    };
   };
 
 
@@ -136,7 +133,7 @@ var app = app || {};
                   "&format=json&callback=wikiCallback&redirects=resolve&prop=extracts&exintro=&explaintext=&rvprop=content";
         var failFunction = function() {
           self.apiResponseFail(queryObject);
-        }
+        };
 
         var successFunction = function(response) {
           if (response[1][0]) {
@@ -147,7 +144,7 @@ var app = app || {};
               title: response[1][0],
               text: response[2][0],
               pageURL: response[3][0]
-            }
+            };
             // TODO HERE
             // self is WikiApi, root is ApiController
             // give var name to root, call root
@@ -158,7 +155,7 @@ var app = app || {};
           else {
             self.apiResponseNoInfo(queryObject);
           }
-        }
+        };
         that.ajax(wikipediaURL, successFunction, failFunction);
       };
       this.request.query = function(queryObject) {
@@ -168,7 +165,7 @@ var app = app || {};
         var failFunction = function() {
           self.apiResponseDetailFail(queryObject);
           self.apiResponseImagesFail(queryObject);
-        }
+        };
 
         var successFunction = function(response) {
           res2 = response;
@@ -183,7 +180,7 @@ var app = app || {};
           self.apiResponseDetail(wikipediaData);
           queryObject.query = page.pageid;
           that.request.images(queryObject);
-        }
+        };
         that.ajax(wikipediaURL, successFunction, failFunction);
       };
       this.request.images = function(queryObject) {
@@ -192,7 +189,7 @@ var app = app || {};
                   "&generator=images&prop=imageinfo&iiprop=url|dimensions|mime|user|timestamp&format=json&iiurlwidth=800";
         var failFunction = function() {
           self.apiResponseImagesFail(queryObject);
-        }
+        };
         var successFunction = function(response) {
           var pages = response.query.pages;
           var images = [];
@@ -217,9 +214,9 @@ var app = app || {};
           };
 
           self.apiResponseImages(apiData);
-        }
+        };
         that.ajax(wikipediaURL, successFunction, failFunction);
-      }
+      };
     };
 
   var FoursquareApi = function(data) {
@@ -271,9 +268,9 @@ var app = app || {};
         };
         var failFunction = function() {
           self.apiResponseFail(queryObject);
-        }
+        };
         that.ajax(url, successFunction, failFunction);
-      }
+      };
 
       this.request.query = function(queryObject) {
         var url = "https://api.foursquare.com/v2/venues/" +
@@ -303,20 +300,18 @@ var app = app || {};
           };
           self.apiResponseDetail(foursquareData);
           self.apiResponseImages(imagesData);
-        }
+        };
 
         var failFunction = function() {
           self.apiResponseDetailFail(queryObject);
           self.apiResponseImagesFail(queryObject);
-        }
+        };
         that.ajax(url, successFunction, failFunction);
-      }
+      };
     };
 
-
-
-    this.apis["Wikipedia"] = new WikipediaApi();
-    this.apis["Foursquare"] = new FoursquareApi();
+    this.apis.Wikipedia = new WikipediaApi();
+    this.apis.Foursquare = new FoursquareApi();
   };
   app.api = new ApiController();
 })();
