@@ -378,10 +378,15 @@ var app = app || {};
       if (!apiObject) {
         return;
       }
-      apiData.images.forEach(function (imageData) {
-        apiObject.images.push(apiObject.newImage(imageData));
-      });
-      apiObject.currentImage(apiObject.images()[0]);
+      if (apiData.images.length > 0) {
+        apiData.images.forEach(function (imageData) {
+          apiObject.images.push(apiObject.newImage(imageData));
+        });
+        apiObject.currentImage(apiObject.images()[0]);
+      }
+      else {
+        apiObject.imagesAlt("No images found on " + apiData.api);
+      }
       apiObject.isImagesLoaded(true);
     };
 
@@ -490,4 +495,7 @@ var app = app || {};
     };
   };
   app.lvm = new locationViewModel();
+  if (typeof app.bindLocationsVM === "function") {
+    app.bindLocationsVM();
+  }
 })();

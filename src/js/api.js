@@ -168,7 +168,6 @@ var app = app || {};
         };
 
         var successFunction = function(response) {
-          res2 = response;
           var pages = response.query.pages;
           var page = getFirstChild(pages);
           var wikipediaData = {

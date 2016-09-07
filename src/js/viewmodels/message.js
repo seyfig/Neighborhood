@@ -39,4 +39,8 @@ var app = app || {};
 
   };
   app.mvm = new messageViewModel();
+  if (typeof app.bindMessagesVM === "function") {
+    app.bindMessagesVM();
+  }
+
 })();

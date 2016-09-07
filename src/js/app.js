@@ -1,34 +1,45 @@
 var app = app || {};
 
-// (function() {
+(function() {
+  "use strict";
+  app.bindMessagesVM = function() {
+    if (typeof ko !== undefined) {
+      ko.applyBindings(app.mvm, document.getElementById("messages"));
+      delete app.bindMessagesVM;
+    }
+  };
 
+  app.bindLocationsVM = function() {
+    if (typeof ko !== undefined) {
+      ko.applyBindings(app.lvm, document.getElementById("locations"));
+      ko.applyBindings(app.lvm, document.getElementById("wikipediaModal"));
+      ko.applyBindings(app.lvm, document.getElementById("options"));
+      delete app.bindLocationsVM;
+    }
+  };
+  if(typeof ko !== undefined) {
+    if (app.mvm) {
+      app.bindMessagesVM();
+    }
+    if (app.lvm) {
+      app.bindLocationsVM();
+    }
+  }
 
-
-// })();
+})();
 
 $(function() {
-
-  "use strict";
-  ko.applyBindings(app.mvm, document.getElementById("messages"));
-  ko.applyBindings(app.lvm, document.getElementById("locations"));
-  ko.applyBindings(app.lvm, document.getElementById("wikipediaModal"));
-  ko.applyBindings(app.lvm, document.getElementById("options"));
-
-  var self = app;
-
-  app.initGoogleMaps = function() {
-    self.lvm.initGoogleMaps();
-  };
-
-  app.selectLocationById = function(locationId) {
-    self.lvm.selectLocationById(locationId);
-  };
-
+  if (typeof app.bindMessagesVM === "function") {
+    app.bindMessagesVM();
+  }
+  if (typeof app.bindLocationsVM === "function") {
+    app.bindLocationsVM();
+  }
 
   var isMapInitialized = app.map.initializeMap();
   var d = new Date();
   if (isMapInitialized) {
-    app.initGoogleMaps();
+    app.lvm.initGoogleMaps();
   }
 
 

@@ -4,7 +4,8 @@ var map;
 (function() {
   "use strict";
   var markers = [];
-  var activeMarker;
+  var activeMarker,
+      placeMarkerInfoWindowPrevious;
   var mapController = function() {
     var self = this;
     this.initializeMap = function() {
@@ -219,7 +220,7 @@ var map;
 
       google.maps.event.addListener(marker, 'click', function(args) {
         // Set current location of Location View Model to Marker's location
-        app.selectLocationById(this.locationId);
+        app.lvm.selectLocationById(this.locationId);
       });
 
       self.setMapBounds(new google.maps.LatLng(lat, lng));

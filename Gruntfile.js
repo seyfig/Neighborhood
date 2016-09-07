@@ -9,8 +9,12 @@ module.exports = function(grunt) {
         jsIgnore: 'src/js/lib/*.min.js',
         css: 'src/css/**/*.css',
         cssLint: 'src/css/style.css',
-        html: 'src/index.html',
-        htmlDest: 'src/dist.html'
+        html: 'src/index.html'
+      },
+      temp: {
+        js: 'temp/js/main.js',
+        css: 'temp/css/style.css',
+        html: 'temp/index.html'
       },
       dest: {
         js: 'dist/js/main.js',
@@ -36,6 +40,8 @@ module.exports = function(grunt) {
     },
     uglify: {
       options: {
+        banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
+          '<%= grunt.template.today("yyyy-mm-dd") %> */',
         compress: true,
         mangle: true
         // ,
@@ -50,14 +56,48 @@ module.exports = function(grunt) {
     },
     uncss: {
       dist: {
-        files: {'<%= paths.dest.css %>' : ['<%= paths.src.html %>']
+        options: {
+          ignore: [
+            /\.modal/,
+            /\.alert/,
+            '.fade.in'
+          ]
+        },
+        files: {'<%= paths.temp.css %>' : ['<%= paths.src.html %>']
         }
       }
     },
     cssmin: {
       target: {
         files: {
-          '<%= paths.dest.cssMin %>': ['<%= paths.dest.css %>']
+          '<%= paths.dest.cssMin %>': ['<%= paths.temp.css %>']
+        }
+      }
+    },
+    'string-replace': {
+      dist: {
+        files: {
+          '<%= paths.temp.html %>': '<%= paths.src.html %>'
+        },
+        options: {
+          replacements: [
+            {
+              pattern: /<!-- PROD START/ig,
+              replacement: '<!-- PROD START -->'
+            },
+            {
+              pattern: / PROD END -->/ig,
+              replacement: '<!-- PROD END -->'
+            },
+            {
+              pattern: /<!-- DEV START -->/ig,
+              replacement: '<!-- DEV START '
+            },
+            {
+              pattern: /<!-- DEV END -->/ig,
+              replacement: ' DEV END -->'
+            }
+          ]
         }
       }
     },
@@ -68,7 +108,7 @@ module.exports = function(grunt) {
           collapseWhitespace: true
         },
         files: {
-          '<%= paths.dest.html %>': '<%= paths.src.htmlDest %>'
+          '<%= paths.dest.html %>': '<%= paths.temp.html %>'
         }
       }
     }
@@ -79,6 +119,7 @@ module.exports = function(grunt) {
     'uglify',
     'uncss',
     'cssmin',
+    'string-replace',
     'htmlmin']);
 
 };

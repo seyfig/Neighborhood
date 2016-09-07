@@ -5,8 +5,13 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Neighborhood</title>
+<!-- PROD START
+  <link rel="stylesheet" href="css/style.min.css">
+ PROD END -->
+<!-- DEV START -->
   <link rel="stylesheet" href="css/bootstrap.css">
   <link rel="stylesheet" href="css/style.css">
+<!-- DEV END -->
 </head>
 <body>
   <nav class="sidebar">
@@ -149,10 +154,10 @@
           <div class="detail-text-container">
             <span data-bind="text: description"></span>
           </div>
-          <div class="images-alt-container" data-bind="css:{'hidden': isImagesLoaded()}">
+          <div class="images-alt-container" data-bind="css:{'hidden': currentImage().url()}">
             <p class="images-alt" data-bind="text: imagesAlt"></p>
           </div>
-          <div class="image-container" data-bind="css:{'hidden': !isImagesLoaded()}">
+          <div class="image-container" data-bind="css:{'hidden': !currentImage().url()}">
             <div class="pre-image-div image-button-div image-divs">
               <div class="image-button-place-holder">
               </div>
@@ -187,13 +192,18 @@
 <script src="js/lib/jquery-1.12.4.min.js"></script>
 <script src="js/lib/knockout-3.2.0.min.js"></script>
 <script src="js/lib/bootstrap.min.js"></script>
+<!-- PROD START
+<script src="js/main.min.js"></script>
+ PROD END -->
+<!-- DEV START -->
 <script src="js/init.js"></script>
-<script src="js/map.js"></script>
-<script src="js/api.js"></script>
 <script src="js/model.js"></script>
 <script src="js/viewmodels/location.js"></script>
 <script src="js/viewmodels/message.js"></script>
 <script src="js/app.js"></script>
+<script src="js/map.js"></script>
+<script src="js/api.js"></script>
+<!-- DEV END -->
 <script src="http://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyBCmSMFCDMw4lXHO7ntQACiwkdr2YRmB28"></script>
 </body>
 </html>
