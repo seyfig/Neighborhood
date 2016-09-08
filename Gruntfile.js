@@ -60,7 +60,8 @@ module.exports = function(grunt) {
           ignore: [
             /\.modal/,
             /\.alert/,
-            '.fade.in'
+            '.fade.in',
+            '.sidebar-hamburger.expand'
           ]
         },
         files: {'<%= paths.temp.css %>' : ['<%= paths.src.html %>']
