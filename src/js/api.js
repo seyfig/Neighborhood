@@ -126,7 +126,7 @@ var app = app || {};
           console.log("invalid request");
           return;
         }
-        var query = queryObject.query;
+        var query = encodeURIComponent(queryObject.query).replace(/%20/g,'+');
         var locationId = queryObject.locationId;
         var wikipediaURL = "http://en.wikipedia.org/w/api.php?action=opensearch&search=" +
                   query +
@@ -160,8 +160,9 @@ var app = app || {};
       };
       this.request.query = function(queryObject) {
         var locationId = queryObject.locationId;
+        var query = encodeURIComponent(queryObject.query).replace(/%20/g,'+');
         var wikipediaURL = "https://en.wikipedia.org/w/api.php?format=json&action=query&redirects=resolve&prop=extracts&exintro=&explaintext=&titles=" +
-                  queryObject.query;
+                  query;
         var failFunction = function() {
           self.apiResponseDetailFail(queryObject);
           self.apiResponseImagesFail(queryObject);
@@ -183,8 +184,9 @@ var app = app || {};
         that.ajax(wikipediaURL, successFunction, failFunction);
       };
       this.request.images = function(queryObject) {
+        var query = encodeURIComponent(queryObject.query);
         var wikipediaURL = "https://en.wikipedia.org/w/api.php?action=query&pageids=" +
-                  queryObject.query +
+                  query +
                   "&generator=images&prop=imageinfo&iiprop=url|dimensions|mime|user|timestamp&format=json&iiurlwidth=800";
         var failFunction = function() {
           self.apiResponseImagesFail(queryObject);
@@ -240,7 +242,7 @@ var app = app || {};
 
       this.request.search = function(queryObject) {
         var location = queryObject.location;
-        var query = queryObject.query;
+        var query = encodeURIComponent(queryObject.query);
         var locationId = queryObject.locationId;
         var locationString = location.lat.toString() +
                             "," +
@@ -272,8 +274,9 @@ var app = app || {};
       };
 
       this.request.query = function(queryObject) {
+        var query = encodeURIComponent(queryObject.query);
         var url = "https://api.foursquare.com/v2/venues/" +
-                  queryObject.query +
+                  query +
                   "?";
 
         var successFunction = function(response) {
