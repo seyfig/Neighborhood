@@ -3,7 +3,6 @@ html, body, main {
   min-width: 240px;
 }
 
-
 main {
   position: absolute;
   top: 0;
@@ -117,6 +116,7 @@ main {
 .info-window {
   max-height: 300px;
   overflow: hidden;
+  margin-bottom: 0;
 }
 
 .info-window > .panel-body {
@@ -127,15 +127,26 @@ main {
   margin: -8px -15px 0 0;
 }
 
-.location-wikipedia-short-text {
+.location-address {
   width: 100%;
   margin: 0;
   overflow: hidden;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   text-overflow: ellipsis;
-  -webkit-line-clamp: 7;
-  max-height: 10em;
+  -webkit-line-clamp: 2;
+  max-height: 3em;
+}
+
+.location-api-short-text {
+  width: 100%;
+  margin: 0;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 3;
+  max-height: 5em;
 }
 
 /* MODAL START */
@@ -343,8 +354,7 @@ main {
 }
 /* OPTIONS END*/
 
-/* MEDIA START */
-/* TODO TEST WHICH OVERRIDE */
+/* MEDIA QUERIES START */
 @media only screen and (min-width: 768px) {
   main {
     left: 240px;
@@ -400,7 +410,7 @@ main {
   }
 
   .location-list, .filter-list {
-    max-height: 300px;
+    max-height: 250px;
   }
 
   .filter-button {
@@ -409,7 +419,7 @@ main {
 
 }
 
-@media only screen and (max-width: 359px) {
+@media only screen and (max-width: 459px) {
   #pac-div {
     left: 50px !important;
     width: 50%;
@@ -436,27 +446,20 @@ main {
     margin: -8px 0 0 0 !important;
   }
 
-  /*TODO REPLACAE INFO WINDOW HEADER*/
-
-/*  .info-window-header {
-    height: 40px;
-  }
-
-  .info-window-header > h3 {
-    font-size: 20px;
-    margin: 0;
-    float: left;
-  }
-
-  .info-window-header > h4 {
-    float: right;
-    margin: 5px 0 0;
-  }*/
-
   .info-window-header > h4 {
     font-size: 14px;
   }
 
+  .location-address {
+    -webkit-line-clamp: 1;
+    max-height: 2em;
+  }
+
+  .location-api-short-text {
+    -webkit-line-clamp: 2;
+    max-height: 3em;
+  }
+
+
 }
-
-
+/* MEDIA QUERIES END */

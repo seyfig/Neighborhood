@@ -26,15 +26,10 @@ var app = app || {};
     this.types = [];
     this.editMode = ko.observable(false);
     this.filterMode = ko.observable(false);
-    this.wikipediaMode = ko.observable(false);
     this.apiMode = ko.observable(false);
     this.optionsMode = ko.observable(false);
     this.locations = {};
-    //TODO declare only one place
-    // apicontroller, or here, or app
-    // or from apiconstructors
     this.apiList = ["Wikipedia", "Foursquare"];
-    // TODO ADD NEW API
     this.newApiObject = {};
     this.newApiObject.Wikipedia = Wikipedia;
     this.newApiObject.Foursquare = Foursquare;
@@ -253,6 +248,87 @@ var app = app || {};
       self.apiRequestAll(location);
     };
 
+    this.selectLocationById = function(locationId) {
+      var location = self.getLocation(locationId);
+      if (location) {
+        self.selectLocation(location);
+      }
+      else {
+        self.emptyCurrentLocation();
+      }
+    };
+
+    this.emptyCurrentLocation = function() {
+      self.currentLocation(undefined);
+    };
+
+    this.showMarkerTitle = function(location) {
+      location.marker.showTitleWindow();
+    };
+    this.hideMarkerTitle = function(location) {
+      location.marker.hideTitleWindow();
+    };
+
+    this.search = function() {
+      self.filterList();
+      return true;
+    };
+
+    this.toggleEditMode = function() {
+      self.editMode(!self.editMode());
+    };
+
+    this.toggleFilterMode = function() {
+      self.filterMode(!self.filterMode());
+    };
+
+    this.openApiMode = function(apiObject) {
+      var locationId = apiObject.locationId;
+      var location = self.getLocation(locationId);
+      var api = apiObject.api();
+      if (!location) {
+        return;
+      }
+      if (!api) {
+        console.log("Api not found");
+        return;
+      }
+      if (!apiObject.isDetailLoaded()){
+        self.apiRequestDetail(apiObject.queryDetail());
+      }
+      else if (!apiObject.isImagesLoaded()) {
+        self.apiRequestImages(apiObject.queryImages());
+      }
+      location.currentApiObject(apiObject);
+      self.apiMode(true);
+    };
+
+    this.closeApiMode = function() {
+      self.apiMode(false);
+    };
+
+    this.changeImage = function(apiObject, event) {
+      var index = apiObject.images.indexOf(apiObject.currentImage());
+      var images = apiObject.images();
+      var length = images.length;
+      index += length;
+      if  (event.delegateTarget.classList.contains("pre-image")) {
+        index = (index - 1) % length;
+      }
+      else {
+        index = (index + 1) % length;
+      }
+      apiObject.currentImage(images[index]);
+    };
+
+    this.toggleOptionsMode = function() {
+      self.optionsMode(!self.optionsMode());
+    };
+
+    this.clickCheckbox = function(option,e) {
+      $(e.target).siblings('input').click();
+    };
+
 /* ======= API FUNCTIONS START ======= */
     self.apiRequestAll = function(location) {
       var apiCount = self.apiList.length;
@@ -273,7 +349,6 @@ var app = app || {};
                       "alert-info",
                       8000);
         var queryObject = location.queryObject(api);
-        // TODOF Controll Query Object
         app.api.apiRequest("search", queryObject);
       }
       else if(location.apiRequestStatus[api] === 1) {
@@ -407,92 +482,8 @@ var app = app || {};
       }
       apiObject.imagesAlt("Image list can not be loaded this time.");
     };
-
-
 /* ======= API FUNCTIONS END ======= */
 
-    this.selectLocationById = function(locationId) {
-      var location = self.getLocation(locationId);
-      if (location) {
-        self.selectLocation(location);
-      }
-      else {
-        self.emptyCurrentLocation();
-      }
-    };
-
-    this.emptyCurrentLocation = function() {
-      self.currentLocation(undefined);
-    };
-
-    this.showMarkerTitle = function(location) {
-      location.marker.showTitleWindow();
-    };
-    this.hideMarkerTitle = function(location) {
-      location.marker.hideTitleWindow();
-    };
-
-    this.search = function() {
-      self.filterList();
-      return true;
-    };
-
-    this.toggleEditMode = function() {
-      self.editMode(!self.editMode());
-    };
-
-    this.toggleFilterMode = function() {
-      self.filterMode(!self.filterMode());
-    };
-
-    this.openApiMode = function(apiObject) {
-      var locationId = apiObject.locationId;
-      var location = self.getLocation(locationId);
-      var api = apiObject.api();
-      if (!location) {
-        return;
-      }
-      if (!api) {
-        console.log("Api not found");
-        return;
-      }
-      if (!apiObject.isDetailLoaded()){
-        self.apiRequestDetail(apiObject.queryDetail());
-      }
-      else if (!apiObject.isImagesLoaded()) {
-        self.apiRequestImages(apiObject.queryImages());
-      }
-      location.currentApiObject(apiObject);
-      self.apiMode(true);
-    };
-
-    this.closeApiMode = function() {
-      self.apiMode(false);
-    };
-
-    this.changeImage = function(apiObject, event) {
-      var index = apiObject.images.indexOf(apiObject.currentImage());
-      var images = apiObject.images();
-      var length = images.length;
-      index += length;
-      if  (event.delegateTarget.classList.contains("pre-image")) {
-        index = (index - 1) % length;
-      }
-      else {
-        index = (index + 1) % length;
-      }
-      apiObject.currentImage(images[index]);
-    };
-
-
-
-    this.toggleOptionsMode = function() {
-      self.optionsMode(!self.optionsMode());
-    };
-
-    this.clickCheckbox = function(option,e) {
-      $(e.target).siblings('input').click();
-    };
   };
   app.lvm = new locationViewModel();
   if (typeof app.bindLocationsVM === "function") {

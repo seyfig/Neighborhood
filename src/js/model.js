@@ -51,20 +51,17 @@ var Place = function(data) {
     return apiObjectList;
   },this);
   this.apiRequestStatus = {};
-  // TODO REFACTOR
+  // ENUM
   // 0 not called
   // 1 waiting call exists
   // 2 received data, don't need to call again
   // 3 no data found, don't need to call again
   this.apiSearchStatus = {};
-  // TODO REFACTOR
+  // ENUM
   // 0 search with name and city
   // 1 search with name
   this.queryObject = function(api) {
     var query = this.name();
-    // TODO
-    // TODOF how is it possible without following line
-    //if (api === "Wikipedia") {
     if (api && !this.apiSearchStatus[api]) {
       query += " " + this.city();
     }
@@ -94,20 +91,6 @@ var Message = function(data) {
   this.component = ko.observable(data.component);
   this.text = ko.observable(data.text);
   this.kind = ko.observable(data.kind);
-};
-
-// TODO INHERITANCE NOT WORKED
-// not used for now
-var apiObject = function(data) {
-  this.locationId = data.locationId;
-  this.description = ko.observable("Loading description");
-  this.isDetailLoaded = ko.observable(false);
-  this.isImagesLoaded = ko.observable(false);
-  this.images = ko.observableArray([]);
-  this.imagesAlt = ko.observable("Loading image list");
-  this.pageId = data.pageId;
-  this.pageURL = ko.observable(data.pageURL);
-  this.currentImage = ko.observable(new ApiObjectImage());
 };
 
 var Wikipedia = function(data) {
@@ -155,7 +138,7 @@ var Foursquare = function(data) {
   this.api = ko.observable("Foursquare");
   this.rating = ko.observable(data.rating);
   this.shortURL = ko.observable(data.shortURL);
-  this.text = ko.observable("Foursquare");
+  this.text = ko.observable(data.text);
   this.newImage = function(imageData) {
     return new FoursquareImage(imageData);
   };

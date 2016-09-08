@@ -20,7 +20,7 @@
         <span class="glyphicon glyphicon-menu-hamburger"></span>
       </button>
     </div>
-    <div id="locations">
+    <div id="locations"> <!-- Locations START -->
       <div class="form-group">
         <div class="btn-group filter-group">
           <button type="button" class="btn btn-default filter-button" data-bind="click: toggleFilterMode">Filters</button>
@@ -74,20 +74,20 @@
             </p>
           </div>
           <div class="location-info-third" data-bind="foreach: getApiObjects()">
-            <div class="location-wikipedia-short">
+            <div class="location-api-short">
               <h4><a target="_blank" data-bind="attr: {href: pageURL}, text: api">Api</a>
-                <button class="btn btn-primary modal-button float-right" data-bind="css: {'active': $root.wikipediaMode}, click: $root.openApiMode" data-toggle="modal" data-target="#wikipediaModal">
+                <button class="btn btn-primary modal-button float-right" data-bind="click: $root.openApiMode" data-toggle="modal" data-target="#apiModal">
                   <span class="text-right glyphicon glyphicon-modal-window" aria-hidden="true"></span>
                 </button>
               </h4>
               <div>
-                <p class="location-wikipedia-short-text" data-bind="text: text"></p>
+                <p class="location-api-short-text" data-bind="text: text"></p>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div> <!-- Locations -->
+    </div> <!-- Locations END -->
   </nav>
   <main>
     <div id="map" class="map">
@@ -136,7 +136,7 @@
     </div>
   </main>
   <!-- Modal -->
-  <div class="modal fade" id="wikipediaModal" tabindex="-1" role="dialog" aria-labelledby="wikipediaModalLabel" data-bind="with: currentLocation(), css: {'hidden': !currentLocation()}">
+  <div class="modal fade" id="apiModal" tabindex="-1" role="dialog" aria-labelledby="apiModalLabel" data-bind="with: currentLocation(), css: {'hidden': !currentLocation()}">
     <div class="modal-dialog" role="document" data-bind="with: currentApiObject()">
       <div class="modal-content">
         <div class="modal-header">
@@ -144,7 +144,7 @@
             <span aria-hidden="true">&times;</span>
           </button>
           <a target="_blank" data-bind="attr: {href: pageURL}">
-            <h4 class="modal-title" id="wikipediaModalLabel">
+            <h4 class="modal-title" id="apiModalLabel">
               <span data-bind="text: api">Api</span>
               <span data-bind="text: $parent.name()">Name</span>
             </h4>
