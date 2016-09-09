@@ -16,49 +16,49 @@ var app = app || {};
 
   var ApiController = function() {
     var self = this;
-    this.apiList = ["Wikipedia", "Foursquare"];
-    this.apis = {};
+    self.apiList = ["Wikipedia", "Foursquare"];
+    self.apis = {};
 
-    this.apiRequest = function(request, queryObject) {
+    self.apiRequest = function(request, queryObject) {
       var api = queryObject.api;
       if (self.apis[api].request[request]) {
         self.apis[api].request[request](queryObject);
       }
     };
 
-    this.apiResponseData = function(apiData) {
+    self.apiResponseData = function(apiData) {
       app.lvm.apiResponseData(apiData);
     };
 
-    this.apiResponseFail = function(queryObject) {
+    self.apiResponseFail = function(queryObject) {
       app.lvm.apiResponseFail(queryObject);
     };
 
-    this.apiResponseNoInfo = function(queryObject) {
+    self.apiResponseNoInfo = function(queryObject) {
       app.lvm.apiResponseNoInfo(queryObject);
     };
 
-    this.apiResponseDetail = function(apiData) {
+    self.apiResponseDetail = function(apiData) {
       app.lvm.apiResponseDetail(apiData);
     };
 
-    this.apiResponseImages = function(apiData) {
+    self.apiResponseImages = function(apiData) {
       app.lvm.apiResponseImages(apiData);
     };
 
-    this.apiResponseDetailFail = function(queryObject) {
+    self.apiResponseDetailFail = function(queryObject) {
       app.lvm.apiResponseDetailFail(queryObject);
     };
 
-    this.apiResponseImagesFail = function(queryObject) {
+    self.apiResponseImagesFail = function(queryObject) {
       app.lvm.apiResponseImagesFail(queryObject);
     };
 
    var WikipediaApi = function() {
       var that = this;
-      this.api = "Wikipedia";
-      this.request = {};
-      this.ajax = function(url, successFunction, failFunction) {
+      that.api = "Wikipedia";
+      that.request = {};
+      that.ajax = function(url, successFunction, failFunction) {
         if (!url) {
           console.log("Invalid URL");
         }
@@ -75,7 +75,7 @@ var app = app || {};
         .fail(failFunction);
       };
 
-      this.request.search = function(queryObject) {
+      that.request.search = function(queryObject) {
         if (!(queryObject.query &&
               queryObject.locationId !== undefined)) {
           console.log("invalid request");
@@ -107,7 +107,7 @@ var app = app || {};
         };
         that.ajax(wikipediaURL, successFunction, failFunction);
       };
-      this.request.query = function(queryObject) {
+      that.request.query = function(queryObject) {
         var locationId = queryObject.locationId;
         var query = encodeURIComponent(queryObject.query).replace(/%20/g,'+');
         var wikipediaURL = "https://en.wikipedia.org/w/api.php?format=json&action=query&redirects=resolve&prop=extracts&exintro=&explaintext=&titles=" +
@@ -132,7 +132,7 @@ var app = app || {};
         };
         that.ajax(wikipediaURL, successFunction, failFunction);
       };
-      this.request.images = function(queryObject) {
+      that.request.images = function(queryObject) {
         var query = encodeURIComponent(queryObject.query);
         var wikipediaURL = "https://en.wikipedia.org/w/api.php?action=query&pageids=" +
                   query +
@@ -171,9 +171,9 @@ var app = app || {};
 
   var FoursquareApi = function(data) {
       var that = this;
-      this.api = "Foursquare";
-      this.request = {};
-      this.ajax = function(url, successFunction, failFunction) {
+      that.api = "Foursquare";
+      that.request = {};
+      that.ajax = function(url, successFunction, failFunction) {
         var clientId = "RKFO2JAPI2Q0TOWDDMZJ3C2R2G3PCPIZ0MAOBDNKECSKRNBD";
         var clientSecret = "EEUKXUDZQ23RTUARN3CRVFA4AXBSJTDNA3BU5UK0OXGNVIUW";
         url += "client_id=" +
@@ -189,7 +189,7 @@ var app = app || {};
         .fail(failFunction);
       };
 
-      this.request.search = function(queryObject) {
+      that.request.search = function(queryObject) {
         var location = queryObject.location;
         var query = encodeURIComponent(queryObject.query);
         var locationId = queryObject.locationId;
@@ -223,7 +223,7 @@ var app = app || {};
         that.ajax(url, successFunction, failFunction);
       };
 
-      this.request.query = function(queryObject) {
+      that.request.query = function(queryObject) {
         var query = encodeURIComponent(queryObject.query);
         var url = "https://api.foursquare.com/v2/venues/" +
                   query +
@@ -263,8 +263,8 @@ var app = app || {};
       };
     };
 
-    this.apis.Wikipedia = new WikipediaApi();
-    this.apis.Foursquare = new FoursquareApi();
+    self.apis.Wikipedia = new WikipediaApi();
+    self.apis.Foursquare = new FoursquareApi();
   };
   app.api = new ApiController();
 })();

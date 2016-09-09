@@ -14,34 +14,34 @@ var app = app || {};
   var locationViewModel = function() {
     // Initialize without Google Maps
     var self = this;
-    this.isGoogleMapsLoaded = false;
-    this.centerOn = ko.observableArray([]);
-    this.centerOnList = ko.observableArray(["select","filter"]);
-    this.searchText = ko.observable("");
-    this.locationIndex = 0;
-    this.fullLocationList = ko.observableArray([]);
-    this.locationList = ko.observableArray([]);
-    this.typeList = ko.observableArray([]);
-    this.selectedTypes = ko.observableArray([]);
-    this.types = [];
-    this.editMode = ko.observable(false);
-    this.filterMode = ko.observable(false);
-    this.apiMode = ko.observable(false);
-    this.optionsMode = ko.observable(false);
-    this.locations = {};
-    this.apiList = ["Wikipedia", "Foursquare"];
-    this.newApiObject = {};
-    this.newApiObject.Wikipedia = Wikipedia;
-    this.newApiObject.Foursquare = Foursquare;
+    self.isGoogleMapsLoaded = false;
+    self.centerOn = ko.observableArray([]);
+    self.centerOnList = ko.observableArray(["select","filter"]);
+    self.searchText = ko.observable("");
+    self.locationIndex = 0;
+    self.fullLocationList = ko.observableArray([]);
+    self.locationList = ko.observableArray([]);
+    self.typeList = ko.observableArray([]);
+    self.selectedTypes = ko.observableArray([]);
+    self.types = [];
+    self.editMode = ko.observable(false);
+    self.filterMode = ko.observable(false);
+    self.apiMode = ko.observable(false);
+    self.optionsMode = ko.observable(false);
+    self.locations = {};
+    self.apiList = ["Wikipedia", "Foursquare"];
+    self.newApiObject = {};
+    self.newApiObject.Wikipedia = Wikipedia;
+    self.newApiObject.Foursquare = Foursquare;
 
     // Add Google Maps Functions
-    this.initGoogleMaps = function() {
-      this.isGoogleMapsLoaded = true;
+    self.initGoogleMaps = function() {
+      self.isGoogleMapsLoaded = true;
       self.createLocationMarker(self.fullLocationList());
     };
 
     // Create marker and, assign location to marker
-    this.createLocationMarker = function(locations) {
+    self.createLocationMarker = function(locations) {
       if (!self.isGoogleMapsLoaded) {
         return false;
       }
@@ -60,7 +60,7 @@ var app = app || {};
     };
 
     // Apply both search and filter
-    this.filterList = function() {
+    self.filterList = function() {
       var searchText = self.searchText().trim().toLowerCase();
       var isSearch = false;
       var isFilter = false;
@@ -121,7 +121,7 @@ var app = app || {};
       }
     };
 
-    this.addTypeFromText = function(typeNames) {
+    self.addTypeFromText = function(typeNames) {
       if (!Array.isArray(typeNames)) {
         typeNames = [typeNames];
       }
@@ -138,7 +138,7 @@ var app = app || {};
       });
     };
 
-    this.addTypeFromName = function(typeNames) {
+    self.addTypeFromName = function(typeNames) {
       if (!Array.isArray(typeNames)) {
         typeNames = [typesNames];
       }
@@ -160,7 +160,7 @@ var app = app || {};
       });
     };
 
-    this.insertLocation = function(location) {
+    self.insertLocation = function(location) {
       location.id = self.locationIndex;
       self.locationIndex += 1;
       self.fullLocationList.push(location);
@@ -174,7 +174,7 @@ var app = app || {};
     self.locationList(self.fullLocationList.slice(0));
     self.currentLocation = ko.observable();
 
-    this.save = function() {
+    self.save = function() {
       var localLocations = [];
       self.fullLocationList().forEach(function(location) {
         localLocations.push(location.toLocalStorage());
@@ -182,7 +182,7 @@ var app = app || {};
       localStorage.setItem('locations-knockoutjs', JSON.stringify(localLocations));
     };
 
-    this.getLocation = function(locationId) {
+    self.getLocation = function(locationId) {
       var location = self.locations[locationId];
       if (!location) {
         console.log("Location not found with id:" + locationId);
@@ -193,7 +193,7 @@ var app = app || {};
       }
     };
 
-    this.getApiObject = function(api, locationId) {
+    self.getApiObject = function(api, locationId) {
       var apiObject = self.locations[locationId].apiObjects()[api]();
       if (!apiObject) {
         console.log((api ? api : "ApiObject") + " not found");
@@ -204,7 +204,7 @@ var app = app || {};
       }
     };
 
-    this.addLocation = function(placeData) {
+    self.addLocation = function(placeData) {
       var place = new Place(placeData);
       place.location({
           lat: place.location().lat(),
@@ -224,7 +224,7 @@ var app = app || {};
       self.filterList();
     };
 
-    this.removeLocation = function(location) {
+    self.removeLocation = function(location) {
       if (self.currentLocation() === location) {
         self.emptyCurrentLocation();
       }
@@ -237,7 +237,7 @@ var app = app || {};
       self.filterList();
     };
 
-    this.selectLocation = function(location) {
+    self.selectLocation = function(location) {
       self.currentLocation(location);
       if (self.isGoogleMapsLoaded) {
         location.marker.selectLocation();
@@ -248,7 +248,7 @@ var app = app || {};
       self.apiRequestAll(location);
     };
 
-    this.selectLocationById = function(locationId) {
+    self.selectLocationById = function(locationId) {
       var location = self.getLocation(locationId);
       if (location) {
         self.selectLocation(location);
@@ -258,31 +258,31 @@ var app = app || {};
       }
     };
 
-    this.emptyCurrentLocation = function() {
+    self.emptyCurrentLocation = function() {
       self.currentLocation(undefined);
     };
 
-    this.showMarkerTitle = function(location) {
+    self.showMarkerTitle = function(location) {
       location.marker.showTitleWindow();
     };
-    this.hideMarkerTitle = function(location) {
+    self.hideMarkerTitle = function(location) {
       location.marker.hideTitleWindow();
     };
 
-    this.search = function() {
+    self.search = function() {
       self.filterList();
       return true;
     };
 
-    this.toggleEditMode = function() {
+    self.toggleEditMode = function() {
       self.editMode(!self.editMode());
     };
 
-    this.toggleFilterMode = function() {
+    self.toggleFilterMode = function() {
       self.filterMode(!self.filterMode());
     };
 
-    this.openApiMode = function(apiObject) {
+    self.openApiMode = function(apiObject) {
       var locationId = apiObject.locationId;
       var location = self.getLocation(locationId);
       var api = apiObject.api();
@@ -303,11 +303,11 @@ var app = app || {};
       self.apiMode(true);
     };
 
-    this.closeApiMode = function() {
+    self.closeApiMode = function() {
       self.apiMode(false);
     };
 
-    this.changeImage = function(apiObject, event) {
+    self.changeImage = function(apiObject, event) {
       var index = apiObject.images.indexOf(apiObject.currentImage());
       var images = apiObject.images();
       var length = images.length;
@@ -321,11 +321,11 @@ var app = app || {};
       apiObject.currentImage(images[index]);
     };
 
-    this.toggleOptionsMode = function() {
+    self.toggleOptionsMode = function() {
       self.optionsMode(!self.optionsMode());
     };
 
-    this.clickCheckbox = function(option,e) {
+    self.clickCheckbox = function(option,e) {
       $(e.target).siblings('input').click();
     };
 
@@ -378,7 +378,7 @@ var app = app || {};
       location.apiRequestStatus[api] = 2;
     };
 
-    this.apiResponseFail = function(queryObject) {
+    self.apiResponseFail = function(queryObject) {
       // Fail to access API
       var api = queryObject.api;
       var location = self.getLocation(queryObject.locationId);
@@ -394,7 +394,7 @@ var app = app || {};
                     8000);
     };
 
-    this.apiResponseNoInfo = function(queryObject) {
+    self.apiResponseNoInfo = function(queryObject) {
       // No information found with query
       // If search performed with location name and city,
       // A new request send with only location name
@@ -422,15 +422,15 @@ var app = app || {};
                     8000);
     };
 
-    this.apiRequestDetail = function(queryObject) {
+    self.apiRequestDetail = function(queryObject) {
       app.api.apiRequest("query", queryObject);
     };
 
-    this.apiRequestImages = function(queryObject) {
+    self.apiRequestImages = function(queryObject) {
       app.api.apiRequest("images", queryObject);
     };
 
-    this.apiResponseDetail = function(apiData) {
+    self.apiResponseDetail = function(apiData) {
       var apiObject = self.getApiObject(apiData.api,
                                         apiData.locationId);
       if (!apiObject) {
@@ -447,7 +447,7 @@ var app = app || {};
       apiObject.isDetailLoaded(true);
     };
 
-    this.apiResponseImages = function(apiData) {
+    self.apiResponseImages = function(apiData) {
       var apiObject = self.getApiObject(apiData.api,
                                         apiData.locationId);
       if (!apiObject) {
@@ -465,18 +465,18 @@ var app = app || {};
       apiObject.isImagesLoaded(true);
     };
 
-    this.apiResponseDetailFail = function(queryObject) {
-      var apiObject = self.getApiObject(apiData.api,
-                                        apiData.locationId);
+    self.apiResponseDetailFail = function(queryObject) {
+      var apiObject = self.getApiObject(queryObject.api,
+                                        queryObject.locationId);
       if (!apiObject) {
         return;
       }
       apiObject.description("Description can not be loaded this time.");
     };
 
-    this.apiResponseImagesFail = function(queryObject) {
-      var apiObject = self.getApiObject(apiData.api,
-                                        apiData.locationId);
+    self.apiResponseImagesFail = function(queryObject) {
+      var apiObject = self.getApiObject(queryObject.api,
+                                        queryObject.locationId);
       if (!apiObject) {
         return;
       }

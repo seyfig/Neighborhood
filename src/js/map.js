@@ -8,8 +8,8 @@ var map;
       placeMarkerInfoWindowPrevious;
   var mapController = function() {
     var self = this;
-    this.initializeMap = function() {
-      var pacDiv = document.getElementById('pac-div');
+    self.pacDiv = document.getElementById('pac-div');
+    self.initializeMap = function() {
       if (typeof google === 'object' && typeof google.maps === 'object') {
       	var mapOptions = {
       		center: {lat: 37.795, lng: -122.450},
@@ -25,7 +25,7 @@ var map;
         // Create the search box and link it to the UI element.
         var input = document.getElementById('pac-input');
         var searchBox = new google.maps.places.SearchBox(input);
-        map.controls[google.maps.ControlPosition.TOP_LEFT].push(pacDiv);
+        map.controls[google.maps.ControlPosition.TOP_LEFT].push(self.pacDiv);
 
         // Bias the SearchBox results towards current map's viewport.
         map.addListener('bounds_changed', function() {
@@ -113,16 +113,21 @@ var map;
           //Make sure the map bounds get updated on page resize
           map.fitBounds(mapBounds);
         });
+        app.lvm.initGoogleMaps();
         return true;
       }
       else {
-        pacDiv.remove();
-        app.mvm.addMessage("GoogleMaps","Google Maps not loaded", "alert-danger");
+        self.googleError();
         return false;
       }
     };
+    self.googleError = function() {
+      self.pacDiv.remove();
+      delete self.pacDiv;
+      app.mvm.addMessage("GoogleMaps","Google Maps not loaded", "alert-danger");
+    };
 
-    this.clearPlaceMarkers = function(placesMarkers) {
+    self.clearPlaceMarkers = function(placesMarkers) {
       // Clear out the old Google Places markers.
       placesMarkers.forEach(function(marker) {
         marker.setMap(null);
@@ -131,7 +136,7 @@ var map;
       return placesMarkers;
     };
 
-    this.setMapBounds = function(latlng) {
+    self.setMapBounds = function(latlng) {
       if (!window.mapBounds) {
         window.mapBounds = new google.maps.LatLngBounds();
       }
@@ -144,7 +149,7 @@ var map;
       map.setCenter(bounds.getCenter());
     };
 
-    this.setMapBoundsVisibleMarkers = function() {
+    self.setMapBoundsVisibleMarkers = function() {
       var bounds = new google.maps.LatLngBounds();
       var visibleMarkersCount = 0;
       for (var i = 0; i < markers.length; i++) {
@@ -163,7 +168,7 @@ var map;
       }
     };
 
-    this.createMapMarker = function(location) {
+    self.createMapMarker = function(location) {
       var lat = location.lat;
       var lng = location.lng;
       var name = location.name;
@@ -229,15 +234,15 @@ var map;
       return marker;
     };
 
-    this.setAllMarkersVisible = function() {
+    self.setAllMarkersVisible = function() {
       for (var i = 0; i< markers.length; i++) {
         markers[i].setVisible(true);
       }
     };
-    this.setMarkerMap = function(marker, map) {
+    self.setMarkerMap = function(marker, map) {
       marker.setMap(map);
     };
-    this.setAllMarkersMap = function(map) {
+    self.setAllMarkersMap = function(map) {
       for (var i = 0; i < markers.length; i++) {
         markers[i].setMap(map);
       }
@@ -245,3 +250,11 @@ var map;
   };
   app.map = new mapController();
 })();
+
+var initMap = function() {
+  app.map.initializeMap();
+};
+
+var googleError = function() {
+  app.map.googleError();
+};

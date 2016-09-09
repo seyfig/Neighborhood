@@ -189,7 +189,7 @@
       </div>
     </div>
   </div>
-<script src="js/lib/jquery-1.12.4.min.js"></script>
+<script src="js/lib/jquery-3.1.0.min.js"></script>
 <script src="js/lib/knockout-3.2.0.min.js"></script>
 <script src="js/lib/bootstrap.min.js"></script>
 <!-- PROD START
@@ -204,6 +204,6 @@
 <script src="js/map.js"></script>
 <script src="js/api.js"></script>
 <!-- DEV END -->
-<script src="http://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyBCmSMFCDMw4lXHO7ntQACiwkdr2YRmB28"></script>
+<script asyn defer src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyBCmSMFCDMw4lXHO7ntQACiwkdr2YRmB28&callback=initMap" onerror="googleError()"></script>
 </body>
 </html>

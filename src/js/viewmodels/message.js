@@ -5,7 +5,7 @@ var app = app || {};
   var messageViewModel = function() {
     var self = this;
     self.messageList = ko.observableArray([]);
-    this.addMessage = function(component, text, kind, duration) {
+    self.addMessage = function(component, text, kind, duration) {
       var message = new Message( {
         component: component,
         text: text,
@@ -29,11 +29,11 @@ var app = app || {};
       }
     };
 
-    this.dismissMessage = function(message) {
+    self.dismissMessage = function(message) {
       self.messageList.remove(message);
     };
 
-    this.dismissAllMessages = function() {
+    self.dismissAllMessages = function() {
       self.messageList.removeAll();
     };
 

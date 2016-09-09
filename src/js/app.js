@@ -17,6 +17,7 @@ var app = app || {};
       delete app.bindLocationsVM;
     }
   };
+
   if(typeof ko !== undefined) {
     if (app.mvm) {
       app.bindMessagesVM();
@@ -36,11 +37,6 @@ $(function() {
     app.bindLocationsVM();
   }
 
-  var isMapInitialized = app.map.initializeMap();
-  var d = new Date();
-  if (isMapInitialized) {
-    app.lvm.initGoogleMaps();
-  }
 
   var closeSideBar = function() {
       $('.sidebar').removeClass('expand').animate({'left': '-240px'},800);
