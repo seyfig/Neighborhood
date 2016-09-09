@@ -59,9 +59,6 @@ var app = app || {};
       that.api = "Wikipedia";
       that.request = {};
       that.ajax = function(url, successFunction, failFunction) {
-        if (!url) {
-          console.log("Invalid URL");
-        }
         var wikiRequestTimeout = setTimeout(failFunction,8000);
         $.ajax({
           type: "GET",
@@ -76,11 +73,6 @@ var app = app || {};
       };
 
       that.request.search = function(queryObject) {
-        if (!(queryObject.query &&
-              queryObject.locationId !== undefined)) {
-          console.log("invalid request");
-          return;
-        }
         var query = encodeURIComponent(queryObject.query).replace(/%20/g,'+');
         var locationId = queryObject.locationId;
         var wikipediaURL = "http://en.wikipedia.org/w/api.php?action=opensearch&search=" +

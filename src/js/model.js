@@ -60,30 +60,31 @@ var Place = function(data) {
   // ENUM
   // 0 search with name and city
   // 1 search with name
-  this.queryObject = function(api) {
-    var query = this.name();
-    if (api && !this.apiSearchStatus[api]) {
-      query += " " + this.city();
-    }
-    var queryObject = {
-      api: api,
-      locationId: this.id,
-      location: this.location(),
-      name: this.name(),
-      city: this.city(),
-      query: query
-    };
-    return queryObject;
+};
+
+Place.prototype.queryObject = function(api) {
+  var query = this.name();
+  if (api && !this.apiSearchStatus[api]) {
+    query += " " + this.city();
+  }
+  var queryObject = {
+    api: api,
+    locationId: this.id,
+    location: this.location(),
+    name: this.name(),
+    city: this.city(),
+    query: query
   };
-  this.toLocalStorage = function() {
-    return {
-      name: this.name(),
-      types: this.types(),
-      geometry: {
-        location: this.location()
-      },
-      formatted_address: this.formatted_address()
-    };
+  return queryObject;
+};
+Place.prototype.toLocalStorage = function() {
+  return {
+    name: this.name(),
+    types: this.types(),
+    geometry: {
+      location: this.location()
+    },
+    formatted_address: this.formatted_address()
   };
 };
 
@@ -93,7 +94,7 @@ var Message = function(data) {
   this.kind = ko.observable(data.kind);
 };
 
-var Wikipedia = function(data) {
+var ApiObject = function(data) {
   this.locationId = data.locationId;
   this.description = ko.observable("Loading description");
   this.isDetailLoaded = ko.observable(false);
@@ -103,51 +104,52 @@ var Wikipedia = function(data) {
   this.pageId = data.pageId;
   this.pageURL = ko.observable(data.pageURL);
   this.currentImage = ko.observable(new ApiObjectImage());
-  this.api = ko.observable("Wikipedia");
   this.text = ko.observable(data.text);
+}
+
+var Wikipedia = function(data) {
+  ApiObject.call(this,data);
+  this.api = ko.observable("Wikipedia");
   this.title = data.title;
-  this.newImage = function(imageData) {
-    return new WikipediaImage(imageData);
+};
+
+Wikipedia.prototype = Object.create(ApiObject.prototype);
+Wikipedia.prototype.constructor = Wikipedia;
+Wikipedia.prototype.newImage = function(imageData) {
+  return new WikipediaImage(imageData);
+};
+Wikipedia.prototype.queryDetail = function() {
+  return {
+    query: this.title,
+    locationId: this.locationId,
+    api: this.api()
   };
-  this.queryDetail = function() {
-    return {
-      query: this.title,
-      locationId: this.locationId,
-      api: this.api()
-    };
-  };
-  this.queryImages = function() {
-    return {
-      query: this.pageId,
-      locationId: this.locationId,
-      api: this.api()
-    };
+};
+Wikipedia.prototype.queryImages = function() {
+  return {
+    query: this.pageId,
+    locationId: this.locationId,
+    api: this.api()
   };
 };
 
 var Foursquare = function(data) {
-  this.locationId = data.locationId;
-  this.description = ko.observable("Loading description");
-  this.isDetailLoaded = ko.observable(false);
-  this.isImagesLoaded = ko.observable(false);
-  this.images = ko.observableArray([]);
-  this.imagesAlt = ko.observable("Loading image list");
-  this.pageId = data.pageId;
-  this.pageURL = ko.observable(data.pageURL);
-  this.currentImage = ko.observable(new ApiObjectImage());
+  ApiObject.call(this,data);
   this.api = ko.observable("Foursquare");
   this.rating = ko.observable(data.rating);
   this.shortURL = ko.observable(data.shortURL);
-  this.text = ko.observable(data.text);
-  this.newImage = function(imageData) {
-    return new FoursquareImage(imageData);
-  };
-  this.queryDetail = function() {
-    return {
-      query: this.pageId,
-      locationId: this.locationId,
-      api: this.api()
-    };
+};
+
+Foursquare.prototype = Object.create(ApiObject.prototype);
+Foursquare.prototype.constructor = Foursquare;
+Foursquare.prototype.newImage = function(imageData) {
+  return new FoursquareImage(imageData);
+};
+Foursquare.prototype.queryDetail = function() {
+  return {
+    query: this.pageId,
+    locationId: this.locationId,
+    api: this.api()
   };
 };
 

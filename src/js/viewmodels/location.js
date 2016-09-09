@@ -185,7 +185,6 @@ var app = app || {};
     self.getLocation = function(locationId) {
       var location = self.locations[locationId];
       if (!location) {
-        console.log("Location not found with id:" + locationId);
         return;
       }
       else {
@@ -196,7 +195,6 @@ var app = app || {};
     self.getApiObject = function(api, locationId) {
       var apiObject = self.locations[locationId].apiObjects()[api]();
       if (!apiObject) {
-        console.log((api ? api : "ApiObject") + " not found");
         return;
       }
       else {
@@ -290,7 +288,6 @@ var app = app || {};
         return;
       }
       if (!api) {
-        console.log("Api not found");
         return;
       }
       if (!apiObject.isDetailLoaded()){
