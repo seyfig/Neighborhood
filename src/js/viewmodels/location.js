@@ -56,6 +56,11 @@ var app = app || {};
           name: location.name()
         };
         location.marker = app.map.createMapMarker(locationData);
+        google.maps.event.addListener(location.marker,
+                                      "click",
+                                      function(args) {
+                                        self.selectLocation(location);
+                                      });
       });
     };
 
@@ -236,24 +241,18 @@ var app = app || {};
     };
 
     self.selectLocation = function(location) {
+      var currentLocation = self.currentLocation();
+      if (typeof currentLocation === "object") {
+        currentLocation.deselectMarker();
+      }
       self.currentLocation(location);
       if (self.isGoogleMapsLoaded) {
-        location.marker.selectLocation();
+          location.selectMarker();
         if(self.centerOn.indexOf('select') >= 0) {
           map.setCenter(location.marker.getPosition());
         }
       }
       self.apiRequestAll(location);
-    };
-
-    self.selectLocationById = function(locationId) {
-      var location = self.getLocation(locationId);
-      if (location) {
-        self.selectLocation(location);
-      }
-      else {
-        self.emptyCurrentLocation();
-      }
     };
 
     self.emptyCurrentLocation = function() {

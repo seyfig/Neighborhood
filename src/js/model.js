@@ -77,6 +77,7 @@ Place.prototype.queryObject = function(api) {
   };
   return queryObject;
 };
+
 Place.prototype.toLocalStorage = function() {
   return {
     name: this.name(),
@@ -88,11 +89,33 @@ Place.prototype.toLocalStorage = function() {
   };
 };
 
+Place.prototype.selectMarker = function() {
+  var marker = this.marker;
+  if (typeof marker === "undefined") {
+    return;
+  }
+  marker.setIcon('http://maps.google.com/mapfiles/ms/icons/blue-dot.png');
+  marker.setAnimation(google.maps.Animation.BOUNCE);
+  setTimeout(function() {
+    marker.setAnimation(null);
+  }, 700);
+};
+
+Place.prototype.deselectMarker = function() {
+  var marker = this.marker;
+  if (typeof marker === "undefined") {
+    return;
+  }
+  marker.setIcon(undefined);
+};
+
+
 var Message = function(data) {
   this.component = ko.observable(data.component);
   this.text = ko.observable(data.text);
   this.kind = ko.observable(data.kind);
 };
+
 
 var ApiObject = function(data) {
   this.locationId = data.locationId;
@@ -105,7 +128,8 @@ var ApiObject = function(data) {
   this.pageURL = ko.observable(data.pageURL);
   this.currentImage = ko.observable(new ApiObjectImage());
   this.text = ko.observable(data.text);
-}
+};
+
 
 var Wikipedia = function(data) {
   ApiObject.call(this,data);
@@ -118,6 +142,7 @@ Wikipedia.prototype.constructor = Wikipedia;
 Wikipedia.prototype.newImage = function(imageData) {
   return new WikipediaImage(imageData);
 };
+
 Wikipedia.prototype.queryDetail = function() {
   return {
     query: this.title,
@@ -125,6 +150,7 @@ Wikipedia.prototype.queryDetail = function() {
     api: this.api()
   };
 };
+
 Wikipedia.prototype.queryImages = function() {
   return {
     query: this.pageId,
@@ -145,6 +171,7 @@ Foursquare.prototype.constructor = Foursquare;
 Foursquare.prototype.newImage = function(imageData) {
   return new FoursquareImage(imageData);
 };
+
 Foursquare.prototype.queryDetail = function() {
   return {
     query: this.pageId,
@@ -153,12 +180,14 @@ Foursquare.prototype.queryDetail = function() {
   };
 };
 
+
 var ApiObjectImage = function(data) {
   this.url = ko.observable("");
   this.descriptionurl = ko.observable("");
   this.user = ko.observable("");
   this.localDateString = ko.observable("");
 };
+
 
 var WikipediaImage = function(data) {
   this.dataurl = ko.observable(data.url);
@@ -169,6 +198,7 @@ var WikipediaImage = function(data) {
   var d = new Date(data.timestamp);
   this.localDateString = ko.observable(d.toLocaleString());
 };
+
 
 var FoursquareImage = function(data) {
   this.id = ko.observable(data.id);

@@ -3,9 +3,11 @@ var map;
 
 (function() {
   "use strict";
+  // // TODO DELETE THESE
   var markers = [];
-  var activeMarker,
-      placeMarkerInfoWindowPrevious;
+  var placeMarkerInfoWindowPrevious;
+  // var activeMarker,
+  //     placeMarkerInfoWindowPrevious;
   var mapController = function() {
     var self = this;
     self.pacDiv = document.getElementById('pac-div');
@@ -198,33 +200,12 @@ var map;
         titleWindow.close();
       };
 
-      marker.bounce = function() {
-        marker.setAnimation(google.maps.Animation.BOUNCE);
-        setTimeout(function() {
-          marker.setAnimation(null);
-        },700);
-      };
-
-      marker.selectLocation = function() {
-        if (typeof activeMarker === "object") {
-          activeMarker.setIcon(undefined);
-        }
-        marker.setIcon('http://maps.google.com/mapfiles/ms/icons/blue-dot.png');
-        marker.bounce();
-        activeMarker = marker;
-      };
-
       google.maps.event.addListener(marker, 'mouseover', function() {
         marker.showTitleWindow();
       });
 
       google.maps.event.addListener(marker, 'mouseout', function() {
         marker.hideTitleWindow();
-      });
-
-      google.maps.event.addListener(marker, 'click', function(args) {
-        // Set current location of Location View Model to Marker's location
-        app.lvm.selectLocationById(this.locationId);
       });
 
       self.setMapBounds(new google.maps.LatLng(lat, lng));
