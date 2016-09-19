@@ -2,8 +2,6 @@ var app = app || {};
 
 (function() {
   "use strict";
-  // New API's should be added as api constructors
-  // and should be added to ApiController.apiList
 
   var getFirstChild = function(list) {
     var item;
@@ -13,7 +11,16 @@ var app = app || {};
     }
     return item;
   };
-
+  /**
+   * Class ApiController
+   * Manages API Requests and Responses
+   * New API's should be added as api constructors like WikipediaApi and FoursquareApi
+   * The API names should be added to ApiController.apiList, and locationViewModel.apiList
+   in location.js file.
+   * For returning objects, new objects should be added to model.js like Wikipedia,
+   WikipediaImage, and FoursquareImage,
+   * @constructor
+   */
   var ApiController = function() {
     var self = this;
     self.apiList = ["Wikipedia", "Foursquare"];

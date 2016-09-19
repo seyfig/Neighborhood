@@ -10,9 +10,12 @@ var app = app || {};
     });
     return textArray.join(' ');
   };
-
+  /**
+   * Class locationViewModel
+   * Initialize without Google Maps
+   * @constructor
+   */
   var locationViewModel = function() {
-    // Initialize without Google Maps
     var self = this;
     self.isGoogleMapsLoaded = false;
     self.centerOn = ko.observableArray([]);
@@ -34,13 +37,18 @@ var app = app || {};
     self.newApiObject.Wikipedia = Wikipedia;
     self.newApiObject.Foursquare = Foursquare;
 
-    // Add Google Maps Functions
+    /**
+     * Add Google Maps Functions
+     * @method initGoogleMaps
+     */
     self.initGoogleMaps = function() {
       self.isGoogleMapsLoaded = true;
       self.createLocationMarker(self.fullLocationList());
     };
-
-    // Create marker and, assign location to marker
+    /**
+     * Create marker and, assign location to marker
+     * @method createLocationMarker
+     */
     self.createLocationMarker = function(locations) {
       if (!self.isGoogleMapsLoaded) {
         return false;
@@ -63,17 +71,19 @@ var app = app || {};
                                       });
       });
     };
-
-    // Apply both search and filter
+    /**
+     * Applies both search and filter
+     * If searchText is empty, don't apply search
+     * If all checkboxes or none are clicked, don't apply filter
+     * @method filterList
+     */
     self.filterList = function() {
       var searchText = self.searchText().trim().toLowerCase();
       var isSearch = false;
       var isFilter = false;
-      //If searhText is empty, don't apply search
       if (searchText.length > 0) {
         isSearch = true;
       }
-      //If all checkboxes or none are clicked, don't apply filter
       if (self.selectedTypes().length > 0 &&
             self.selectedTypes().length < self.typeList().length) {
         isFilter = true;
@@ -333,6 +343,12 @@ var app = app || {};
       }
     };
 
+    /**
+     * Searchs location on an API
+     * If location found, apiResponseData function called
+     to initialize apiObject for that API
+     * @method apiRequest
+     */
     self.apiRequest = function(api, location) {
       // To search location on an API
       // If location found, apiResponseData function called
@@ -359,9 +375,12 @@ var app = app || {};
       }
     };
 
+    /**
+     * Initialize apiObject with initial information
+     * This initial object may be used to request more information
+     * @method apiResponseData
+     */
     self.apiResponseData = function(apiData) {
-      // Initialize apiObject with initial information
-      // This initial object may be used to request more information
       var api = apiData.api;
       var location = self.getLocation(apiData.locationId);
       if (!location) {
@@ -374,8 +393,11 @@ var app = app || {};
       location.apiRequestStatus[api] = 2;
     };
 
+    /**
+     * When fail to access API
+     * @method apiResponseFail
+     */
     self.apiResponseFail = function(queryObject) {
-      // Fail to access API
       var api = queryObject.api;
       var location = self.getLocation(queryObject.locationId);
       if (!location) {
@@ -390,12 +412,15 @@ var app = app || {};
                     8000);
     };
 
+    /**
+     * When no information found with query
+     * If search performed with location name and city,
+     a new request send with only location name.
+     Otherwise, apiRequestStatus for the API set to not found,
+     in order to prevent sending new requests for the same apiObject
+     * @method apiResponseNoInfo
+     */
     self.apiResponseNoInfo = function(queryObject) {
-      // No information found with query
-      // If search performed with location name and city,
-      // A new request send with only location name
-      // Otherwise, apiRequestStatus for the API set to not found
-      // In order to prevent sending new requests for the same apiObject
       var api = queryObject.api;
       var location = self.getLocation(queryObject.locationId);
       if (!location) {
