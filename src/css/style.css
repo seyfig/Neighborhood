@@ -1,4 +1,6 @@
-html, body, main {
+html,
+body,
+main {
   height: 100%;
   min-width: 240px;
 }

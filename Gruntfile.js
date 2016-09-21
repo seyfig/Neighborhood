@@ -61,7 +61,8 @@ module.exports = function(grunt) {
             /\.modal/,
             /\.alert/,
             '.fade.in',
-            '.sidebar-hamburger.expand'
+            '.sidebar-hamburger.expand',
+            '.list-group-item.active'
           ]
         },
         files: {'<%= paths.temp.css %>' : ['<%= paths.src.html %>']
