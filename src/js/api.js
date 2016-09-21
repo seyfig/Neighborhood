@@ -82,7 +82,7 @@ var app = app || {};
       that.request.search = function(queryObject) {
         var query = encodeURIComponent(queryObject.query).replace(/%20/g,'+');
         var locationId = queryObject.locationId;
-        var wikipediaURL = "http://en.wikipedia.org/w/api.php?action=opensearch&search=" +
+        var wikipediaURL = "https://en.wikipedia.org/w/api.php?action=opensearch&search=" +
                   query +
                   "&format=json&callback=wikiCallback&redirects=resolve&prop=extracts&exintro=&explaintext=&rvprop=content";
         var failFunction = function() {

@@ -143,7 +143,7 @@ Place.prototype.selectMarker = function() {
   if (typeof marker === "undefined") {
     return;
   }
-  marker.setIcon('http://maps.google.com/mapfiles/ms/icons/blue-dot.png');
+  marker.setIcon('https://maps.google.com/mapfiles/ms/icons/blue-dot.png');
   marker.setAnimation(google.maps.Animation.BOUNCE);
   setTimeout(function() {
     marker.setAnimation(null);
