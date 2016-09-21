@@ -2,10 +2,20 @@ var app = app || {};
 
 (function() {
   "use strict";
-  // If local storage exists get data from local storage
-  // Else use hard coded initial locations
-  // In order to reset locations to initial locations,
-  // local storage must be cleared for "locations-knockoutjs"
+  /**
+   * If local storage exists get data from local storage
+   Else use hard coded initial locations
+   * In order to reset locations to initial locations,
+   local storage must be cleared for "locations-knockoutjs"
+   * @type {Object[]} initialLocations
+   * @type {string} Object.name
+   * @type {string[]} Object.types
+   * @type {object} Object.geometry
+   * @type {object} Object.geometry.location
+   * @type {number} Object.geometry.location.lat
+   * @type {number} Object.geometry.location.lng
+   * @type {string} Object.formatted_address
+   */
   var initialLocations = [
     {
       name: "Lands End",
